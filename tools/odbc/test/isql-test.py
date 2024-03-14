@@ -1,8 +1,5 @@
 import sys
 import subprocess
-import tempfile
-import os
-import shutil
 
 if len(sys.argv) < 2:
     raise Exception('need shell binary as parameter')

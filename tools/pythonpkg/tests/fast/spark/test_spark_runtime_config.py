@@ -17,4 +17,4 @@ class TestSparkRuntimeConfig(object):
     def test_spark_runtime_config_get(self, spark):
         # Get a Spark Config
         with pytest.raises(KeyError):
-            partitions = spark.conf.get("spark.sql.shuffle.partitions")
+            spark.conf.get("spark.sql.shuffle.partitions")

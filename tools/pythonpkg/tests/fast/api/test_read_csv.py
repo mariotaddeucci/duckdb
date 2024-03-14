@@ -1,11 +1,7 @@
-from multiprocessing.sharedctypes import Value
-import numpy
 import datetime
-import pandas
 import pytest
 import duckdb
 from io import StringIO, BytesIO
-from duckdb.typing import BIGINT, VARCHAR, INTEGER
 
 
 def TestFile(name):
@@ -323,11 +319,11 @@ class TestReadCSV(object):
 
         obj = ReadError()
         with pytest.raises(ValueError):
-            res = duckdb_cursor.read_csv(obj).fetchall()
+            duckdb_cursor.read_csv(obj).fetchall()
 
         obj = SeekError()
         with pytest.raises(ValueError):
-            res = duckdb_cursor.read_csv(obj).fetchall()
+            duckdb_cursor.read_csv(obj).fetchall()
 
     def test_filelike_custom(self, duckdb_cursor):
         _ = pytest.importorskip("fsspec")
@@ -335,7 +331,6 @@ class TestReadCSV(object):
         class CustomIO:
             def __init__(self):
                 self.loc = 0
-                pass
 
             def seek(self, loc):
                 self.loc = loc
@@ -354,13 +349,13 @@ class TestReadCSV(object):
         _ = pytest.importorskip("fsspec")
         obj = 5
         with pytest.raises(ValueError, match="Can not read from a non file-like object"):
-            res = duckdb_cursor.read_csv(obj).fetchall()
+            duckdb_cursor.read_csv(obj).fetchall()
 
     def test_filelike_none(self, duckdb_cursor):
         _ = pytest.importorskip("fsspec")
         obj = None
         with pytest.raises(ValueError, match="Can not read from a non file-like object"):
-            res = duckdb_cursor.read_csv(obj).fetchall()
+            duckdb_cursor.read_csv(obj).fetchall()
 
     @pytest.mark.skip(reason="depends on garbage collector behaviour, and sporadically breaks in CI")
     def test_internal_object_filesystem_cleanup(self, duckdb_cursor):
@@ -419,7 +414,7 @@ class TestReadCSV(object):
 
         # Use the temporary file paths to read CSV files
         con = duckdb.connect()
-        rel = con.read_csv(f'{tmp_path}/file*.csv')
+        con.read_csv(f'{tmp_path}/file*.csv')
         res = con.sql("select * from rel order by all").fetchall()
         assert res == [(1,), (2,), (3,), (4,), (5,), (6,)]
 
@@ -526,7 +521,7 @@ class TestReadCSV(object):
             duckdb.InvalidInputException, match='Please provide a non-empty list of paths or file-like objects'
         ):
             rel = con.read_csv(files)
-            res = rel.fetchall()
+            rel.fetchall()
 
     def test_read_csv_list_invalid_path(self):
         con = duckdb.connect()
@@ -537,4 +532,4 @@ class TestReadCSV(object):
         ]
         with pytest.raises(duckdb.IOException, match='No files found that match the pattern "not_valid_path"'):
             rel = con.read_csv(files)
-            res = rel.fetchall()
+            rel.fetchall()

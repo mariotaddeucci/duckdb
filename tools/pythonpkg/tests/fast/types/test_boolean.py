@@ -1,5 +1,3 @@
-import duckdb
-import numpy
 
 
 class TestBoolean(object):

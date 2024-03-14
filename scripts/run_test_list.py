@@ -1,7 +1,5 @@
 import sys
 import subprocess
-import re
-import os
 
 # wheth
 no_exit = False

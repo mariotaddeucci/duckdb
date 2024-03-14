@@ -1,4 +1,3 @@
-import duckdb
 import numpy as np
 import os, psutil
 import pytest
@@ -35,7 +34,7 @@ def from_arrow(pandas, duckdb_cursor):
 
 def arrow_replacement(pandas, duckdb_cursor):
     data = pa.array(np.random.rand(1_000_000), type=pa.float32())
-    arrow_table = pa.Table.from_arrays([data], ['a'])
+    pa.Table.from_arrays([data], ['a'])
     duckdb_cursor.query("select sum(a) from arrow_table").fetchall()
 
 

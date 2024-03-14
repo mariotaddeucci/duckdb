@@ -51,7 +51,7 @@ class TestResolveObjectColumns(object):
     @pytest.mark.parametrize('pandas', [NumpyPandas()])
     def test_integers(self, pandas, duckdb_cursor):
         data = [5, 0, 3]
-        df_in = create_generic_dataframe(data, pandas)
+        create_generic_dataframe(data, pandas)
         # These are float64 because pandas would force these to be float64 even if we set them to int8, int16, int32, int64 respectively
         df_expected_res = pandas.DataFrame({'0': pandas.Series(data=data, dtype='int32')})
         df_out = duckdb_cursor.sql("SELECT * FROM df_in").df()
@@ -290,7 +290,7 @@ class TestResolveObjectColumns(object):
         with pytest.raises(
             duckdb.InvalidInputException, match="Dict->Map conversion failed because 'key' list contains duplicates"
         ):
-            converted_col = duckdb_cursor.sql("select * from x").df()
+            duckdb_cursor.sql("select * from x").df()
 
     @pytest.mark.parametrize('pandas', [NumpyPandas(), ArrowPandas()])
     def test_map_nullkey(self, pandas, duckdb_cursor):
@@ -298,7 +298,7 @@ class TestResolveObjectColumns(object):
         with pytest.raises(
             duckdb.InvalidInputException, match="Dict->Map conversion failed because 'key' list contains None"
         ):
-            converted_col = duckdb_cursor.sql("select * from x").df()
+            duckdb_cursor.sql("select * from x").df()
 
     @pytest.mark.parametrize('pandas', [NumpyPandas(), ArrowPandas()])
     def test_map_nullkeylist(self, pandas, duckdb_cursor):
@@ -314,7 +314,7 @@ class TestResolveObjectColumns(object):
         with pytest.raises(
             duckdb.InvalidInputException, match="Dict->Map conversion failed because 'key' list contains None"
         ):
-            converted_col = duckdb_cursor.sql("select * from x").df()
+            duckdb_cursor.sql("select * from x").df()
 
     @pytest.mark.parametrize('pandas', [NumpyPandas(), ArrowPandas()])
     def test_map_fallback_nullkey_coverage(self, pandas, duckdb_cursor):
@@ -327,7 +327,7 @@ class TestResolveObjectColumns(object):
         with pytest.raises(
             duckdb.InvalidInputException, match="Dict->Map conversion failed because 'key' list contains None"
         ):
-            converted_col = duckdb_cursor.sql("select * from x").df()
+            duckdb_cursor.sql("select * from x").df()
 
     @pytest.mark.parametrize('pandas', [NumpyPandas(), ArrowPandas()])
     def test_struct_key_conversion(self, pandas, duckdb_cursor):
@@ -700,7 +700,7 @@ class TestResolveObjectColumns(object):
         data = [1 for _ in range(9)] + [[1, 2, 3]] + [1 for _ in range(9991)]
         x = pandas.DataFrame({'a': pandas.Series(data=data)})
         with pytest.raises(duckdb.InvalidInputException, match="Failed to cast value: Unimplemented type for cast"):
-            res = duckdb_cursor.sql("select * from x").df()
+            duckdb_cursor.sql("select * from x").df()
 
     @pytest.mark.parametrize('pandas', [NumpyPandas(), ArrowPandas()])
     def test_numeric_decimal_zero_fractional(self, pandas, duckdb_cursor):

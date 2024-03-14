@@ -1,4 +1,5 @@
-import os, sys, re
+import os
+import re
 from python_helpers import open_utf8
 
 vector_sizes = [2]

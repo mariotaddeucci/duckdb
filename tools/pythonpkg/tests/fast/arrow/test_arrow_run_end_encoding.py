@@ -1,7 +1,4 @@
-import duckdb
 import pytest
-import pandas as pd
-import duckdb
 
 pa = pytest.importorskip("pyarrow", '14.0.0', reason="Needs pyarrow >= 14")
 pc = pytest.importorskip("pyarrow.compute")
@@ -294,7 +291,7 @@ class TestArrowREE(object):
         structured = pa.chunked_array(structured_chunks)
 
         arrow_tbl = pa.Table.from_arrays([structured], names=['ree'])
-        result = duckdb_cursor.query("select * from arrow_tbl").arrow()
+        duckdb_cursor.query("select * from arrow_tbl").arrow()
 
         expected = duckdb_cursor.query("select {'ree': ree, 'a': a, 'b': b, 'c': c} as s from tbl").fetchall()
         actual = duckdb_cursor.query("select * from result").fetchall()
@@ -345,7 +342,7 @@ class TestArrowREE(object):
 
         structured = pa.chunked_array(structured_chunks)
         arrow_tbl = pa.Table.from_arrays([structured], names=['ree'])
-        result = duckdb_cursor.query("select * from arrow_tbl").arrow()
+        duckdb_cursor.query("select * from arrow_tbl").arrow()
 
         # Recreate the same result set
         expected = []
@@ -388,7 +385,7 @@ class TestArrowREE(object):
         columns[0] = pc.run_end_encode(columns[0])
 
         # Create a (chunked) MapArray from the chunked arrays (columns) of the ArrowTable
-        names = unstructured.column_names
+        unstructured.column_names
         iterables = [x.iterchunks() for x in columns]
         zipped = zip(*iterables)
 

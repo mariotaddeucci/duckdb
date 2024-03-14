@@ -1,15 +1,10 @@
 import duckdb
-import os
 import pytest
 
 pd = pytest.importorskip("pandas")
 pa = pytest.importorskip("pyarrow")
-from typing import Union
-import pyarrow.compute as pc
-import uuid
-import datetime
 
-from duckdb.typing import *
+from duckdb.typing import BIGINT, INTEGER, VARCHAR
 
 
 class TestPyArrowUDF(object):
@@ -26,7 +21,7 @@ class TestPyArrowUDF(object):
         con.create_function('plus_one', plus_one, [BIGINT], BIGINT, type='arrow')
         assert [(6,)] == con.sql('select plus_one(5)').fetchall()
 
-        range_table = con.table_function('range', [5000])
+        con.table_function('range', [5000])
         res = con.sql('select plus_one(i) from range_table tbl(i)').fetchall()
         assert len(res) == 5000
 
@@ -93,7 +88,7 @@ class TestPyArrowUDF(object):
             duckdb.InvalidInputException,
             match='The returned table from a pyarrow scalar udf should only contain one column, found 2',
         ):
-            res = con.sql("""select two_columns(5)""").fetchall()
+            con.sql("""select two_columns(5)""").fetchall()
 
     def test_return_none(self):
         def returns_none(col):
@@ -102,7 +97,7 @@ class TestPyArrowUDF(object):
         con = duckdb.connect()
         con.create_function('will_crash', returns_none, [BIGINT], BIGINT, type='arrow')
         with pytest.raises(duckdb.Error, match="""Could not convert the result into an Arrow Table"""):
-            res = con.sql("""select will_crash(5)""").fetchall()
+            con.sql("""select will_crash(5)""").fetchall()
 
     def test_empty_result(self):
         def return_empty(col):
@@ -112,7 +107,7 @@ class TestPyArrowUDF(object):
         con = duckdb.connect()
         con.create_function('empty_result', return_empty, [BIGINT], BIGINT, type='arrow')
         with pytest.raises(duckdb.InvalidInputException, match='Returned pyarrow table should have 1 tuples, found 0'):
-            res = con.sql("""select empty_result(5)""").fetchall()
+            con.sql("""select empty_result(5)""").fetchall()
 
     def test_excessive_result(self):
         def return_too_many(col):
@@ -122,10 +117,10 @@ class TestPyArrowUDF(object):
         con = duckdb.connect()
         con.create_function('too_many_tuples', return_too_many, [BIGINT], BIGINT, type='arrow')
         with pytest.raises(duckdb.InvalidInputException, match='Returned pyarrow table should have 1 tuples, found 5'):
-            res = con.sql("""select too_many_tuples(5)""").fetchall()
+            con.sql("""select too_many_tuples(5)""").fetchall()
 
     def test_arrow_side_effects(self, duckdb_cursor):
-        import random as r
+        pass
 
         def random_arrow(x):
             if not hasattr(random_arrow, 'data'):

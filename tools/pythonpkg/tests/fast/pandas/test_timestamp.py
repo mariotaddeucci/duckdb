@@ -1,5 +1,4 @@
 import duckdb
-import os
 import datetime
 import pytest
 import pandas as pd

@@ -1,17 +1,13 @@
 import duckdb
-import os
 import pytest
 
 pd = pytest.importorskip("pandas")
 pa = pytest.importorskip("pyarrow")
-from typing import Union
-import pyarrow.compute as pc
 import uuid
 import datetime
 import numpy as np
-import cmath
 
-from duckdb.typing import *
+from duckdb.typing import BIGINT, BLOB, BOOLEAN, DATE, DOUBLE, FLOAT, HUGEINT, INTEGER, INTERVAL, SMALLINT, TIME, TIMESTAMP, TINYINT, UBIGINT, UHUGEINT, UINTEGER, USMALLINT, UTINYINT, UUID, VARCHAR
 
 
 def make_annotated_function(type):
@@ -75,7 +71,7 @@ class TestScalarUDF(object):
 
         # NULLs
         res = con.execute(f"select res from (select ?, test(NULL::{str(type)}) as res)", [value]).fetchall()
-        assert res[0][0] == None
+        assert res[0][0] is None
 
         # Multiple chunks
         size = duckdb.__standard_vector_size__ * 3
@@ -180,7 +176,7 @@ class TestScalarUDF(object):
         con.create_function('return_pd_nan', return_pd_nan, None, duckdb_type, null_handling='SPECIAL', type=udf_type)
 
         res = con.sql('select return_pd_nan()').fetchall()
-        assert res[0][0] == None
+        assert res[0][0] is None
 
     def test_side_effects(self):
         def count() -> int:
@@ -280,7 +276,7 @@ class TestScalarUDF(object):
         con.create_function('return_null', return_null, None, data_type, null_handling='special', type=udf_type)
         rel = con.sql('select return_null() as x')
         assert rel.types[0] == data_type
-        assert rel.fetchall()[0][0] == None
+        assert rel.fetchall()[0][0] is None
 
     def test_udf_transaction_interaction(self):
         def func(x: int) -> int:

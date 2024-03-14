@@ -3,8 +3,6 @@ import pytest
 _ = pytest.importorskip("duckdb.experimental.spark")
 
 from duckdb.experimental.spark.sql.types import Row
-import textwrap
-import duckdb
 
 
 class TestSparkReadParquet(object):

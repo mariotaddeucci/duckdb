@@ -1,4 +1,8 @@
-import json, os, sys, glob, mimetypes, urllib.request, re
+import json
+import os
+import sys
+import urllib.request
+import re
 
 api_url = 'https://api.github.com/repos/duckdb/duckdb/'
 
