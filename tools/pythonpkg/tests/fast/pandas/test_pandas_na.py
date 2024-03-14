@@ -1,29 +1,27 @@
 import numpy as np
-import datetime
-import duckdb
 import pytest
 
 
 def assert_nullness(items, null_indices):
     for i in range(len(items)):
         if i in null_indices:
-            assert items[i] == None
+            assert items[i] is None
         else:
-            assert items[i] != None
+            assert items[i] is not None
 
 
 class TestPandasNA(object):
     def test_pandas_na(self, duckdb_cursor):
         pd = pytest.importorskip('pandas', minversion='1.0.0', reason='Support for pandas.NA has not been added yet')
         # DataFrame containing a single pd.NA
-        df = pd.DataFrame(pd.Series([pd.NA]))
+        pd.DataFrame(pd.Series([pd.NA]))
 
         res = duckdb_cursor.execute("select * from df").fetchall()
-        assert res[0][0] == None
+        assert res[0][0] is None
 
         # DataFrame containing multiple values, with a pd.NA mixed in
         null_index = 3
-        df = pd.DataFrame(pd.Series([3, 1, 2, pd.NA, 8, 6]))
+        pd.DataFrame(pd.Series([3, 1, 2, pd.NA, 8, 6]))
         res = duckdb_cursor.execute("select * from df").fetchall()
         items = [x[0] for x in [y for y in res]]
         assert_nullness(items, [null_index])

@@ -14,9 +14,6 @@ from duckdb.experimental.spark.sql.types import (
     ArrayType,
     MapType,
 )
-from duckdb.experimental.spark.sql.functions import col, struct, when
-import duckdb
-import re
 
 from duckdb.experimental.spark.errors import PySparkValueError, PySparkTypeError
 

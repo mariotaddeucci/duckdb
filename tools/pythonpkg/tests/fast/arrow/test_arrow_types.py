@@ -2,7 +2,6 @@ import duckdb
 
 try:
     import pyarrow as pa
-    import pyarrow.dataset as ds
 
     can_run = True
 except:

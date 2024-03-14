@@ -1,6 +1,4 @@
 import duckdb
-import datetime
-import pytz
 import os
 import pytest
 

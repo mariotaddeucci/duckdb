@@ -1,5 +1,4 @@
 import duckdb
-import numpy
 import pytest
 from datetime import date, timedelta
 import re
@@ -235,4 +234,4 @@ class TestMap(object):
 
         con = duckdb.connect()
         with pytest.raises(duckdb.InvalidInputException):
-            rel = con.sql('select 42').map(basic_function)
+            con.sql('select 42').map(basic_function)

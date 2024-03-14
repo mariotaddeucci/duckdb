@@ -2,7 +2,7 @@ import duckdb
 import pytest
 
 pa = pytest.importorskip("pyarrow")
-from duckdb.typing import *
+from duckdb.typing import VARCHAR
 
 
 class TestArrowBufferSize(object):

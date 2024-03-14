@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 import duckdb
 import os
 import tempfile
@@ -28,7 +27,7 @@ class TestNonDefaultConn(object):
 
     def test_from_parquet(self, duckdb_cursor):
         try:
-            import pyarrow as pa
+            pass
         except ImportError:
             return
         temp_file_name = os.path.join(tempfile.mkdtemp(), next(tempfile._get_candidate_names()))

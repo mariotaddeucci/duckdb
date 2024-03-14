@@ -1,5 +1,4 @@
 import gc
-import duckdb
 import pytest
 import os, psutil
 import pandas as pd

@@ -1,6 +1,5 @@
 import duckdb
 import pytest
-import sys
 import datetime
 import os
 

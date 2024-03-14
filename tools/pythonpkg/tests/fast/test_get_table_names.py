@@ -12,4 +12,4 @@ class TestGetTableNames(object):
         conn = duckdb.connect()
         conn.close()
         with pytest.raises(duckdb.ConnectionException, match="Connection has already been closed"):
-            table_names = conn.get_table_names("SELECT * FROM my_table1, my_table2, my_table3")
+            conn.get_table_names("SELECT * FROM my_table1, my_table2, my_table3")

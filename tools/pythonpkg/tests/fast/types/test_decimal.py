@@ -1,6 +1,5 @@
 import numpy
-import pandas
-from decimal import *
+from decimal import Decimal
 
 
 class TestDecimal(object):

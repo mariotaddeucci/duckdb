@@ -1,6 +1,5 @@
 import json
 import requests
-import sys
 import os
 import subprocess
 import reduce_sql

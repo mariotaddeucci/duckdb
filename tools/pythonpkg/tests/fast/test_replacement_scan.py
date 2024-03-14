@@ -89,21 +89,20 @@ class TestReplacementScan(object):
 
     def test_replacement_scan_alias(self):
         con = duckdb.connect()
-        pyrel1 = con.query('from (values (1, 2)) t(i, j)')
-        pyrel2 = con.query('from (values (1, 10)) t(i, k)')
+        con.query('from (values (1, 2)) t(i, j)')
+        con.query('from (values (1, 10)) t(i, k)')
         pyrel3 = con.query('from pyrel1 join pyrel2 using(i)')
         assert type(pyrel3) == duckdb.DuckDBPyRelation
         assert pyrel3.fetchall() == [(1, 2, 10)]
 
     def test_replacement_scan_pandas_alias(self):
         con = duckdb.connect()
-        df1 = con.query('from (values (1, 2)) t(i, j)').df()
-        df2 = con.query('from (values (1, 10)) t(i, k)').df()
+        con.query('from (values (1, 2)) t(i, j)').df()
+        con.query('from (values (1, 10)) t(i, k)').df()
         df3 = con.query('from df1 join df2 using(i)')
         assert df3.fetchall() == [(1, 2, 10)]
 
     def test_replacement_scan_fail(self):
-        random_object = "I love salmiak rondos"
         con = duckdb.connect()
         with pytest.raises(
             duckdb.InvalidInputException,

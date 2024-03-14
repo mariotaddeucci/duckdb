@@ -5,7 +5,6 @@ try:
     import pyarrow
     import pyarrow.parquet
     import pyarrow.dataset
-    import numpy as np
 
     can_run = True
 except:

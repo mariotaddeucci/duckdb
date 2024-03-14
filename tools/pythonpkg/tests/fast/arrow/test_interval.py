@@ -1,11 +1,8 @@
 import duckdb
-import os
-import datetime
 import pytest
 
 try:
     import pyarrow as pa
-    import pandas as pd
 
     can_run = True
 except:
@@ -58,4 +55,4 @@ class TestArrowInterval(object):
         arrow_table = pa.Table.from_arrays([data], ['a'])
 
         with pytest.raises(duckdb.ConversionException, match='Could not convert Interval to Microsecond'):
-            arrow_from_duck = duckdb.from_arrow(arrow_table).arrow()
+            duckdb.from_arrow(arrow_table).arrow()

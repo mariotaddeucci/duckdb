@@ -39,7 +39,7 @@ class TestPandasArrow(object):
         with pytest.raises(
             duckdb.InvalidInputException, match='The dataframe could not be converted to a pyarrow.lib.Table'
         ):
-            res = con.sql('select * from pyarrow_df').fetchall()
+            con.sql('select * from pyarrow_df').fetchall()
 
         numpy_df = pd.DataFrame(
             {'a': np.ndarray((2,), buffer=np.array([1, 2, 3]), offset=np.int_().itemsize, dtype=int)}
@@ -66,7 +66,7 @@ class TestPandasArrow(object):
         with pytest.raises(
             duckdb.InvalidInputException, match='The dataframe could not be converted to a pyarrow.lib.Table'
         ):
-            res = con.sql('select * from df').fetchall()
+            con.sql('select * from df').fetchall()
 
     def test_empty_df(self):
         df = pd.DataFrame(

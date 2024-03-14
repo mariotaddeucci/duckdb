@@ -1,7 +1,6 @@
 import duckdb
 import pytest
 import os
-import pandas as pd
 
 try:
     import pyarrow.parquet as pq
@@ -19,7 +18,7 @@ class TestArrowReplacementScan(object):
 
         parquet_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'userdata1.parquet')
         userdata_parquet_table = pq.read_table(parquet_filename)
-        df = userdata_parquet_table.to_pandas()
+        userdata_parquet_table.to_pandas()
 
         con = duckdb.connect()
 
@@ -45,8 +44,8 @@ class TestArrowReplacementScan(object):
         if not can_run:
             return
         parquet_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'userdata1.parquet')
-        userdata_parquet_table = pq.read_table(parquet_filename)
-        userdata_parquet_dataset = ds.dataset(parquet_filename)
+        pq.read_table(parquet_filename)
+        ds.dataset(parquet_filename)
 
         con = duckdb.connect()
         assert con.execute("select count(*) from userdata_parquet_dataset").fetchone() == (1000,)
