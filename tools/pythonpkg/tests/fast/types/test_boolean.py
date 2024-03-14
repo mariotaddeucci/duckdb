@@ -1,5 +1,3 @@
-
-
 class TestBoolean(object):
     def test_bool(self, duckdb_cursor):
         duckdb_cursor.execute("SELECT TRUE")

@@ -1,7 +1,19 @@
 import duckdb
 import pytest
 
-from duckdb.typing import BIGINT, HUGEINT, INTEGER, SMALLINT, TINYINT, UBIGINT, UHUGEINT, UINTEGER, USMALLINT, UTINYINT, VARCHAR
+from duckdb.typing import (
+    BIGINT,
+    HUGEINT,
+    INTEGER,
+    SMALLINT,
+    TINYINT,
+    UBIGINT,
+    UHUGEINT,
+    UINTEGER,
+    USMALLINT,
+    UTINYINT,
+    VARCHAR,
+)
 
 
 class TestNativeUDF(object):

@@ -7,7 +7,28 @@ import uuid
 import datetime
 import numpy as np
 
-from duckdb.typing import BIGINT, BLOB, BOOLEAN, DATE, DOUBLE, FLOAT, HUGEINT, INTEGER, INTERVAL, SMALLINT, TIME, TIMESTAMP, TINYINT, UBIGINT, UHUGEINT, UINTEGER, USMALLINT, UTINYINT, UUID, VARCHAR
+from duckdb.typing import (
+    BIGINT,
+    BLOB,
+    BOOLEAN,
+    DATE,
+    DOUBLE,
+    FLOAT,
+    HUGEINT,
+    INTEGER,
+    INTERVAL,
+    SMALLINT,
+    TIME,
+    TIMESTAMP,
+    TINYINT,
+    UBIGINT,
+    UHUGEINT,
+    UINTEGER,
+    USMALLINT,
+    UTINYINT,
+    UUID,
+    VARCHAR,
+)
 
 
 def make_annotated_function(type):
