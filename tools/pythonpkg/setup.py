@@ -10,7 +10,7 @@ from glob import glob
 from os.path import exists
 from typing import TextIO
 
-from setuptools import setup, Extension
+from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext as _build_ext
 
 
@@ -46,8 +46,8 @@ class CompilerLauncherMixin:
         if compiler_launcher:
 
             def spawn_with_compiler_launcher(cmd, **kwargs):
-                if platform.system() == 'Windows' and len(' '.join(cmd)) > 32766:
-                    raise Exception("command too long: " + ' '.join(cmd))
+                if platform.system() == "Windows" and len(" ".join(cmd)) > 32766:
+                    raise Exception("command too long: " + " ".join(cmd))
 
                 exclude_programs = ("link.exe",)
                 if not cmd[0].endswith(exclude_programs):
@@ -71,7 +71,9 @@ class CompilerLauncherMixin:
                 *args,
                 **kwargs,
             ):
-                return original_link(target_desc, [get_short_path(x) for x in objects], *args, **kwargs)
+                return original_link(
+                    target_desc, [get_short_path(x) for x in objects], *args, **kwargs
+                )
 
             original_link = self.compiler.link
             self.compiler.link = link_with_short_paths
@@ -87,13 +89,17 @@ def get_short_path(long_name: str) -> str:
     def get_short_path_name_w():
         from ctypes import wintypes
 
-        kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
+        kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
         _GetShortPathNameW = kernel32.GetShortPathNameW
-        _GetShortPathNameW.argtypes = [wintypes.LPCWSTR, wintypes.LPWSTR, wintypes.DWORD]
+        _GetShortPathNameW.argtypes = [
+            wintypes.LPCWSTR,
+            wintypes.LPWSTR,
+            wintypes.DWORD,
+        ]
         _GetShortPathNameW.restype = wintypes.DWORD
         return _GetShortPathNameW
 
-    if platform.system() != 'Windows':
+    if platform.system() != "Windows":
         return long_name
 
     assert exists(long_name), long_name
@@ -113,40 +119,40 @@ class build_ext(CompilerLauncherMixin, _build_ext):
     pass
 
 
-lib_name = 'duckdb'
+lib_name = "duckdb"
 
-extensions = ['parquet', 'icu', 'fts', 'tpch', 'tpcds', 'json']
+extensions = ["parquet", "icu", "fts", "tpch", "tpcds", "json"]
 
-if platform.system() == 'Windows':
-    extensions = ['parquet', 'icu', 'fts', 'tpch', 'json']
+if platform.system() == "Windows":
+    extensions = ["parquet", "icu", "fts", "tpch", "json"]
 
-is_android = hasattr(sys, 'getandroidapilevel')
-is_pyodide = 'PYODIDE' in os.environ
+is_android = hasattr(sys, "getandroidapilevel")
+is_pyodide = "PYODIDE" in os.environ
 no_source_wheel = is_pyodide
 use_jemalloc = (
     not is_android
     and not is_pyodide
-    and platform.system() == 'Linux'
-    and platform.architecture()[0] == '64bit'
-    and platform.machine() == 'x86_64'
+    and platform.system() == "Linux"
+    and platform.architecture()[0] == "64bit"
+    and platform.machine() == "x86_64"
 )
 
 if use_jemalloc:
-    extensions.append('jemalloc')
+    extensions.append("jemalloc")
 
 unity_build = 0
-if 'DUCKDB_BUILD_UNITY' in os.environ:
+if "DUCKDB_BUILD_UNITY" in os.environ:
     unity_build = 16
 
 try:
     import pybind11
 except ImportError:
     raise Exception(
-        'pybind11 could not be imported. This usually means you\'re calling setup.py directly, or using a version of pip that doesn\'t support PEP517'
+        "pybind11 could not be imported. This usually means you're calling setup.py directly, or using a version of pip that doesn't support PEP517"
     ) from None
 
 # speed up compilation with: -j = cpu_number() on non Windows machines
-if os.name != 'nt' and os.environ.get('DUCKDB_DISABLE_PARALLEL_COMPILE', '') != '1':
+if os.name != "nt" and os.environ.get("DUCKDB_DISABLE_PARALLEL_COMPILE", "") != "1":
     from pybind11.setup_helpers import ParallelCompile
 
     ParallelCompile().install()
@@ -164,59 +170,72 @@ def open_utf8(fpath, flags):
 # make sure we are in the right directory
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
-if os.name == 'nt':
+if os.name == "nt":
     # windows:
-    toolchain_args = ['/wd4244', '/wd4267', '/wd4200', '/wd26451', '/wd26495', '/D_CRT_SECURE_NO_WARNINGS', '/utf-8']
+    toolchain_args = [
+        "/wd4244",
+        "/wd4267",
+        "/wd4200",
+        "/wd26451",
+        "/wd26495",
+        "/D_CRT_SECURE_NO_WARNINGS",
+        "/utf-8",
+    ]
 else:
     # macos/linux
-    toolchain_args = ['-std=c++11', '-g0']
-    if 'DUCKDEBUG' in os.environ:
-        toolchain_args = ['-std=c++11', '-Wall', '-O0', '-g']
-if 'DUCKDB_INSTALL_USER' in os.environ and 'install' in sys.argv:
-    sys.argv.append('--user')
+    toolchain_args = ["-std=c++11", "-g0"]
+    if "DUCKDEBUG" in os.environ:
+        toolchain_args = ["-std=c++11", "-Wall", "-O0", "-g"]
+if "DUCKDB_INSTALL_USER" in os.environ and "install" in sys.argv:
+    sys.argv.append("--user")
 
-existing_duckdb_dir = ''
+existing_duckdb_dir = ""
 libraries = []
-if 'DUCKDB_BINARY_DIR' in os.environ:
-    existing_duckdb_dir = os.environ['DUCKDB_BINARY_DIR']
-if 'DUCKDB_COMPILE_FLAGS' in os.environ:
-    toolchain_args = ['-std=c++11'] + os.environ['DUCKDB_COMPILE_FLAGS'].split()
-if 'DUCKDB_LIBS' in os.environ:
-    libraries = os.environ['DUCKDB_LIBS'].split(' ')
+if "DUCKDB_BINARY_DIR" in os.environ:
+    existing_duckdb_dir = os.environ["DUCKDB_BINARY_DIR"]
+if "DUCKDB_COMPILE_FLAGS" in os.environ:
+    toolchain_args = ["-std=c++11"] + os.environ["DUCKDB_COMPILE_FLAGS"].split()
+if "DUCKDB_LIBS" in os.environ:
+    libraries = os.environ["DUCKDB_LIBS"].split(" ")
 
-define_macros = [('DUCKDB_PYTHON_LIB_NAME', lib_name)]
+define_macros = [("DUCKDB_PYTHON_LIB_NAME", lib_name)]
 
-custom_platform = os.environ.get('DUCKDB_CUSTOM_PLATFORM')
+custom_platform = os.environ.get("DUCKDB_CUSTOM_PLATFORM")
 if custom_platform is not None:
-    define_macros.append(('DUCKDB_CUSTOM_PLATFORM', custom_platform))
+    define_macros.append(("DUCKDB_CUSTOM_PLATFORM", custom_platform))
 
-if platform.system() == 'Darwin':
-    toolchain_args.extend(['-stdlib=libc++', '-mmacosx-version-min=10.7'])
+if platform.system() == "Darwin":
+    toolchain_args.extend(["-stdlib=libc++", "-mmacosx-version-min=10.7"])
 
-if platform.system() == 'Windows':
-    define_macros.extend([('DUCKDB_BUILD_LIBRARY', None), ('WIN32', None)])
+if platform.system() == "Windows":
+    define_macros.extend([("DUCKDB_BUILD_LIBRARY", None), ("WIN32", None)])
 
 if is_pyodide:
     # show more useful error messages in the browser
-    define_macros.append(('PYBIND11_DETAILED_ERROR_MESSAGES', None))
+    define_macros.append(("PYBIND11_DETAILED_ERROR_MESSAGES", None))
 
-if 'BUILD_HTTPFS' in os.environ:
-    libraries += ['crypto', 'ssl']
-    extensions += ['httpfs']
+if "BUILD_HTTPFS" in os.environ:
+    libraries += ["crypto", "ssl"]
+    extensions += ["httpfs"]
 
 for ext in extensions:
-    define_macros.append(('DUCKDB_EXTENSION_{}_LINKED'.format(ext.upper()), None))
+    define_macros.append(("DUCKDB_EXTENSION_{}_LINKED".format(ext.upper()), None))
 
 if not is_pyodide:
     # currently pyodide environment is not compatible with dynamic extension loading
-    define_macros.extend([('DUCKDB_EXTENSION_AUTOLOAD_DEFAULT', '1'), ('DUCKDB_EXTENSION_AUTOINSTALL_DEFAULT', '1')])
+    define_macros.extend(
+        [
+            ("DUCKDB_EXTENSION_AUTOLOAD_DEFAULT", "1"),
+            ("DUCKDB_EXTENSION_AUTOINSTALL_DEFAULT", "1"),
+        ]
+    )
 
 linker_args = toolchain_args[:]
-if platform.system() == 'Windows':
-    linker_args.extend(['rstrtmgr.lib', 'bcrypt.lib'])
+if platform.system() == "Windows":
+    linker_args.extend(["rstrtmgr.lib", "bcrypt.lib"])
 
 short_paths = False
-if platform.system() == 'Windows':
+if platform.system() == "Windows":
     short_paths = True
 
 extra_files = []
@@ -224,26 +243,30 @@ header_files = []
 
 
 def list_source_files(directory):
-    sources = glob('src/**/*.cpp', recursive=True)
+    sources = glob("src/**/*.cpp", recursive=True)
     return sources
 
 
 script_path = os.path.dirname(os.path.abspath(__file__))
-main_include_path = os.path.join(script_path, 'src', 'include')
-main_source_path = os.path.join(script_path, 'src')
-main_source_files = ['duckdb_python.cpp'] + list_source_files(main_source_path)
+main_include_path = os.path.join(script_path, "src", "include")
+main_source_path = os.path.join(script_path, "src")
+main_source_files = ["duckdb_python.cpp"] + list_source_files(main_source_path)
 
-include_directories = [main_include_path, pybind11.get_include(False), pybind11.get_include(True)]
-if 'BUILD_HTTPFS' in os.environ and 'OPENSSL_ROOT_DIR' in os.environ:
-    include_directories += [os.path.join(os.environ['OPENSSL_ROOT_DIR'], 'include')]
+include_directories = [
+    main_include_path,
+    pybind11.get_include(False),
+    pybind11.get_include(True),
+]
+if "BUILD_HTTPFS" in os.environ and "OPENSSL_ROOT_DIR" in os.environ:
+    include_directories += [os.path.join(os.environ["OPENSSL_ROOT_DIR"], "include")]
 
 
 def exclude_extensions(f: TextIO):
-    files = [x for x in f.read().split('\n') if len(x) > 0]
+    files = [x for x in f.read().split("\n") if len(x) > 0]
     if use_jemalloc:
         return files
     else:
-        return [x for x in files if 'jemalloc' not in x]
+        return [x for x in files if "jemalloc" not in x]
 
 
 if len(existing_duckdb_dir) == 0:
@@ -251,18 +274,26 @@ if len(existing_duckdb_dir) == 0:
     source_files = main_source_files
 
     # check if amalgamation exists
-    if os.path.isfile(os.path.join(script_path, '..', '..', 'scripts', 'amalgamation.py')):
+    if os.path.isfile(
+        os.path.join(script_path, "..", "..", "scripts", "amalgamation.py")
+    ):
         # amalgamation exists: compiling from source directory
         # copy all source files to the current directory
-        sys.path.append(os.path.join(script_path, '..', '..', 'scripts'))
+        sys.path.append(os.path.join(script_path, "..", "..", "scripts"))
         import package_build
 
         (source_list, include_list, original_sources) = package_build.build_package(
-            os.path.join(script_path, "duckdb_build"), extensions, False, unity_build, "duckdb_build", short_paths
+            os.path.join(script_path, "duckdb_build"),
+            extensions,
+            False,
+            unity_build,
+            "duckdb_build",
+            short_paths,
         )
 
         duckdb_sources = [
-            os.path.sep.join(package_build.get_relative_path(script_path, x).split('/')) for x in source_list
+            os.path.sep.join(package_build.get_relative_path(script_path, x).split("/"))
+            for x in source_list
         ]
         duckdb_sources.sort()
 
@@ -277,57 +308,62 @@ if len(existing_duckdb_dir) == 0:
         header_files = amalgamation.list_includes_files(duckdb_includes)
 
         # write the source list, include list and git hash to separate files
-        with open_utf8('sources.list', 'w+') as f:
+        with open_utf8("sources.list", "w+") as f:
             for source_file in duckdb_sources:
                 f.write(source_file + "\n")
 
-        with open_utf8('includes.list', 'w+') as f:
+        with open_utf8("includes.list", "w+") as f:
             for include_file in duckdb_includes:
-                f.write(include_file + '\n')
+                f.write(include_file + "\n")
 
-        extra_files = ['sources.list', 'includes.list'] + original_sources
+        extra_files = ["sources.list", "includes.list"] + original_sources
     else:
         # if amalgamation does not exist, we are in a package distribution
         # read the include files, source list and include files from the supplied lists
-        with open_utf8('sources.list', 'r') as f:
+        with open_utf8("sources.list", "r") as f:
             duckdb_sources = exclude_extensions(f)
 
-        with open_utf8('includes.list', 'r') as f:
+        with open_utf8("includes.list", "r") as f:
             duckdb_includes = exclude_extensions(f)
 
     source_files += duckdb_sources
     include_directories = duckdb_includes + include_directories
 
     libduckdb = Extension(
-        lib_name + '.duckdb',
+        lib_name + ".duckdb",
         include_dirs=include_directories,
         sources=source_files,
         extra_compile_args=toolchain_args,
         extra_link_args=linker_args,
         libraries=libraries,
-        language='c++',
+        language="c++",
         define_macros=define_macros,
     )
 else:
-    sys.path.append(os.path.join(script_path, '..', '..', 'scripts'))
+    sys.path.append(os.path.join(script_path, "..", "..", "scripts"))
     import package_build
 
-    include_directories += [os.path.join('..', '..', include) for include in package_build.third_party_includes()]
-    toolchain_args += ['-I' + x for x in package_build.includes(extensions)]
+    include_directories += [
+        os.path.join("..", "..", include)
+        for include in package_build.third_party_includes()
+    ]
+    toolchain_args += ["-I" + x for x in package_build.includes(extensions)]
 
-    result_libraries = package_build.get_libraries(existing_duckdb_dir, libraries, extensions)
+    result_libraries = package_build.get_libraries(
+        existing_duckdb_dir, libraries, extensions
+    )
     library_dirs = [x[0] for x in result_libraries if x[0] is not None]
     libnames = [x[1] for x in result_libraries if x[1] is not None]
 
     libduckdb = Extension(
-        lib_name + '.duckdb',
+        lib_name + ".duckdb",
         include_dirs=include_directories,
         sources=main_source_files,
         extra_compile_args=toolchain_args,
         extra_link_args=linker_args,
         libraries=libnames,
         library_dirs=library_dirs,
-        language='c++',
+        language="c++",
         define_macros=define_macros,
     )
 
@@ -337,14 +373,13 @@ else:
 def setup_data_files(data_files):
     directory_map = {}
     for data_file in data_files:
-        normalized_fpath = os.path.sep.join(data_file.split('/'))
+        normalized_fpath = os.path.sep.join(data_file.split("/"))
         splits = normalized_fpath.rsplit(os.path.sep, 1)
         if len(splits) == 1:
             # no directory specified
             directory = ""
         else:
             directory = splits[0]
-            splits[1]
         if directory not in directory_map:
             directory_map[directory] = []
         directory_map[directory].append(normalized_fpath)
@@ -360,45 +395,45 @@ if no_source_wheel:
 
 packages = [
     lib_name,
-    'duckdb.typing',
-    'duckdb.query_graph',
-    'duckdb.functional',
-    'duckdb.value',
-    'duckdb-stubs',
-    'duckdb-stubs.functional',
-    'duckdb-stubs.typing',
-    'duckdb-stubs.value',
-    'duckdb-stubs.value.constant',
-    'adbc_driver_duckdb',
+    "duckdb.typing",
+    "duckdb.query_graph",
+    "duckdb.functional",
+    "duckdb.value",
+    "duckdb-stubs",
+    "duckdb-stubs.functional",
+    "duckdb-stubs.typing",
+    "duckdb-stubs.value",
+    "duckdb-stubs.value.constant",
+    "adbc_driver_duckdb",
 ]
 
 spark_packages = [
-    'duckdb.experimental',
-    'duckdb.experimental.spark',
-    'duckdb.experimental.spark.sql',
-    'duckdb.experimental.spark.errors',
-    'duckdb.experimental.spark.errors.exceptions',
+    "duckdb.experimental",
+    "duckdb.experimental.spark",
+    "duckdb.experimental.spark.sql",
+    "duckdb.experimental.spark.errors",
+    "duckdb.experimental.spark.errors.exceptions",
 ]
 
 packages.extend(spark_packages)
 
 setup(
     name=lib_name,
-    description='DuckDB in-process database',
-    keywords='DuckDB Database SQL OLAP',
+    description="DuckDB in-process database",
+    keywords="DuckDB Database SQL OLAP",
     url="https://www.duckdb.org",
-    long_description='See here for an introduction: https://duckdb.org/docs/api/python/overview',
-    license='MIT',
+    long_description="See here for an introduction: https://duckdb.org/docs/api/python/overview",
+    license="MIT",
     data_files=data_files,
     # NOTE: might need to be find_packages() ?
     packages=packages,
     include_package_data=True,
-    python_requires='>=3.7.0',
-    tests_require=['google-cloud-storage', 'mypy', 'pytest'],
+    python_requires=">=3.7.0",
+    tests_require=["google-cloud-storage", "mypy", "pytest"],
     classifiers=[
-        'Topic :: Database :: Database Engines/Servers',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
+        "Topic :: Database :: Database Engines/Servers",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
     ],
     ext_modules=[libduckdb],
     maintainer="Hannes Muehleisen",
