@@ -1,8 +1,6 @@
 import duckdb
 import pandas as pd
 import numpy
-import datetime
-import time
 
 
 class TestProgressBarPandas(object):
@@ -36,4 +34,4 @@ class TestProgressBarPandas(object):
         con.execute("PRAGMA progress_bar_time=1")
         con.execute("PRAGMA disable_print_progress_bar")
         result = con.execute("SELECT SUM(df.i) from df").fetchall()
-        assert result[0][0] == None
+        assert result[0][0] is None

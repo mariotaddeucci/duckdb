@@ -23,7 +23,6 @@ def replace_with_ndarray(obj):
 
 # we need to write our own equality function that considers nan==nan for testing purposes
 def recursive_equality(o1, o2):
-    import math
 
     if type(o1) != type(o2):
         return False
@@ -536,7 +535,7 @@ class TestAllTypes(object):
     @pytest.mark.parametrize('cur_type', all_types)
     def test_arrow(self, cur_type):
         try:
-            import pyarrow as pa
+            pass
         except:
             return
         # We skip those since the extreme ranges are not supported in arrow.
@@ -584,11 +583,11 @@ class TestAllTypes(object):
         conn = duckdb.connect()
         conn.execute("SET timezone = UTC")
         if cur_type in replacement_values:
-            dataframe = conn.execute("select " + replacement_values[cur_type]).df()
+            conn.execute("select " + replacement_values[cur_type]).df()
         elif cur_type in adjusted_values:
-            dataframe = conn.execute(f'select {adjusted_values[cur_type]} from test_all_types()').df()
+            conn.execute(f'select {adjusted_values[cur_type]} from test_all_types()').df()
         else:
-            dataframe = conn.execute(f'select "{cur_type}" from test_all_types()').df()
+            conn.execute(f'select "{cur_type}" from test_all_types()').df()
         print(cur_type)
         round_trip_dataframe = conn.execute("select * from dataframe").df()
         result_dataframe = conn.execute("select * from dataframe").fetchall()

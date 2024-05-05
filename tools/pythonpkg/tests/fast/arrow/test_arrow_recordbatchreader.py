@@ -5,7 +5,6 @@ try:
     import pyarrow
     import pyarrow.parquet
     import pyarrow.dataset
-    import numpy as np
 
     can_run = True
 except:
@@ -63,7 +62,7 @@ class TestArrowRecordBatchReader(object):
         )
 
         batches = [r for r in userdata_parquet_dataset.to_batches()]
-        reader = pyarrow.dataset.Scanner.from_batches(batches, schema=userdata_parquet_dataset.schema).to_reader()
+        pyarrow.dataset.Scanner.from_batches(batches, schema=userdata_parquet_dataset.schema).to_reader()
 
         assert (
             duckdb_conn.execute(

@@ -7,7 +7,6 @@ try:
     import pyarrow.dataset
     from pyarrow.dataset import Scanner
     import pyarrow.compute as pc
-    import numpy as np
 
     can_run = True
 except:
@@ -61,7 +60,7 @@ class TestArrowScanner(object):
 
         scanner_filter = (pc.field("first_name") == pc.scalar('Jose')) & (pc.field("salary") > pc.scalar(134708.82))
 
-        arrow_scanner = Scanner.from_dataset(arrow_dataset, filter=scanner_filter)
+        Scanner.from_dataset(arrow_dataset, filter=scanner_filter)
 
         assert duckdb_conn.execute("select count(*) from arrow_scanner").fetchone()[0] == 12
 

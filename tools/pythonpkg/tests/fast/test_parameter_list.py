@@ -22,9 +22,9 @@ class TestParameterList(object):
         conn.execute("create table bool_table (a bool)")
         conn.execute("insert into bool_table values (TRUE)")
         with pytest.raises(duckdb.NotImplementedException, match='Unable to transform'):
-            res = conn.execute("select count(*) from bool_table where a =?", [df_in])
+            conn.execute("select count(*) from bool_table where a =?", [df_in])
 
     def test_explicit_nan_param(self):
         con = duckdb.default_connection
         res = con.execute('select isnan(cast(? as double))', (float("nan"),))
-        assert res.fetchone()[0] == True
+        assert res.fetchone()[0] is True

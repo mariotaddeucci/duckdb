@@ -34,7 +34,7 @@ class TestDBApiFetch(object):
 
     def test_multiple_fetch_arrow(self, duckdb_cursor):
         pd = pytest.importorskip("pandas")
-        arrow = pytest.importorskip("pyarrow")
+        pytest.importorskip("pyarrow")
         con = duckdb.connect()
         c = con.execute('SELECT 42::BIGINT AS a')
         table = c.arrow()

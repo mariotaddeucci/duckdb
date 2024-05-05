@@ -1,7 +1,4 @@
 import duckdb
-import pytest
-import pandas as pd
-import duckdb
 
 try:
     import pyarrow as pa
@@ -17,7 +14,7 @@ class TestArrowBatchIndex(object):
             return
         con = duckdb.connect()
         df = con.execute('SELECT * FROM range(10000000) t(i)').df()
-        arrow_tbl = pa.Table.from_pandas(df)
+        pa.Table.from_pandas(df)
 
         con.execute('CREATE TABLE tbl AS SELECT * FROM arrow_tbl')
 

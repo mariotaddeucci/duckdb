@@ -1,7 +1,7 @@
 import duckdb
 import pytest
 from duckdb.typing import INTEGER, VARCHAR, TIMESTAMP
-from duckdb import Expression, ConstantExpression, ColumnExpression, StarExpression, FunctionExpression, CaseExpression
+from duckdb import ConstantExpression, ColumnExpression, StarExpression, FunctionExpression, CaseExpression
 from duckdb.value.constant import Value, IntegerValue
 import datetime
 
@@ -130,7 +130,7 @@ class TestExpression(object):
         con = duckdb.connect()
 
         pd = pytest.importorskip("pandas")
-        df = pd.DataFrame({'a': [42, 43, 0], 'b': [True, False, True], 'c': [23.123, 623.213, 0.30234]})
+        pd.DataFrame({'a': [42, 43, 0], 'b': [True, False, True], 'c': [23.123, 623.213, 0.30234]})
         rel = con.sql("select * from df")
         rel2 = rel.select('a', 'b')
         res = rel2.fetchall()
@@ -497,7 +497,7 @@ class TestExpression(object):
         with pytest.raises(
             duckdb.BinderException, match='Binder Error: Aggregates cannot be present in a Project relation!'
         ):
-            rel2 = rel.select(expr)
+            rel.select(expr)
 
     def test_case_expression(self):
         con = duckdb.connect()
@@ -568,13 +568,13 @@ class TestExpression(object):
         with pytest.raises(duckdb.OutOfRangeException, match="Overflow in multiplication of INT16"):
             expr = ColumnExpression("salary") * 100
             rel2 = rel.select(expr)
-            res = rel2.fetchall()
+            rel2.fetchall()
 
         with pytest.raises(duckdb.OutOfRangeException, match="Overflow in multiplication of INT16"):
             val = duckdb.Value(100, duckdb.typing.TINYINT)
             expr = ColumnExpression("salary") * val
             rel2 = rel.select(expr)
-            res = rel2.fetchall()
+            rel2.fetchall()
 
     def test_struct_column_expression(self):
         con = duckdb.connect()

@@ -1,13 +1,12 @@
 import pytest
 import duckdb
-import numpy as np
 import sys
 from conftest import NumpyPandas, ArrowPandas
 
 
 def assert_create(internal_data, expected_result, data_type, pandas):
     conn = duckdb.connect()
-    df_in = pandas.DataFrame(data=internal_data, dtype=data_type)
+    pandas.DataFrame(data=internal_data, dtype=data_type)
 
     conn.execute("CREATE TABLE t AS SELECT * FROM df_in")
 

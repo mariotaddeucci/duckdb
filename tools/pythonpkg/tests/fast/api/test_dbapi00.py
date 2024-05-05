@@ -2,7 +2,6 @@
 
 import numpy
 import pytest
-import duckdb
 from conftest import NumpyPandas, ArrowPandas
 
 
@@ -22,7 +21,6 @@ class TestSimpleDBAPI(object):
 
         duckdb_cursor.execute('Select * from integers')
         # by default 'size' is 1
-        arraysize = 1
         list_of_results = []
         while True:
             res = duckdb_cursor.fetchmany()

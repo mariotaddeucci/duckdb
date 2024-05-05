@@ -38,6 +38,6 @@ class TestExplain(object):
 
     def test_explain_df(self, duckdb_cursor):
         pd = pytest.importorskip("pandas")
-        df = pd.DataFrame({'a': [42]})
+        pd.DataFrame({'a': [42]})
         res = duckdb_cursor.sql('select * from df').explain('ANALYZE')
         assert isinstance(res, str)

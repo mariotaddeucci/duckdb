@@ -1,7 +1,4 @@
-import duckdb
 import pytest
-import pandas as pd
-import duckdb
 
 pa = pytest.importorskip("pyarrow", '14.0.0', reason="Needs pyarrow >= 14")
 pc = pytest.importorskip("pyarrow.compute")
@@ -44,7 +41,7 @@ class TestArrowREE(object):
         encoded_array = pc.run_end_encode(array)
 
         schema = pa.schema([("ree", encoded_array.type)])
-        tbl = pa.Table.from_arrays([encoded_array], schema=schema)
+        pa.Table.from_arrays([encoded_array], schema=schema)
         res = duckdb_cursor.sql("select * from tbl").fetchall()
         assert res == expected
 
@@ -130,7 +127,7 @@ class TestArrowREE(object):
                 ("b", encoded_arrays['b'].type),
             ]
         )
-        tbl = pa.Table.from_arrays([encoded_arrays['ree'], encoded_arrays['a'], encoded_arrays['b']], schema=schema)
+        pa.Table.from_arrays([encoded_arrays['ree'], encoded_arrays['a'], encoded_arrays['b']], schema=schema)
 
         # Scan the Arrow Table and verify that the results are the same
         res = duckdb_cursor.sql("select {} from tbl where {}".format(projection, filter)).fetchall()
@@ -145,7 +142,7 @@ class TestArrowREE(object):
         encoded_array = pc.run_end_encode(array)
 
         schema = pa.schema([("ree", encoded_array.type)])
-        pa_res = pa.Table.from_arrays([encoded_array], schema=schema)
+        pa.Table.from_arrays([encoded_array], schema=schema)
         res = duckdb_cursor.sql("select * from pa_res").fetchall()
         assert res == expected
 
@@ -198,12 +195,12 @@ class TestArrowREE(object):
 
         # Verify that the array is run end encoded
         ar_type = arrow_tbl['ree'].type
-        assert pa.types.is_run_end_encoded(ar_type) == True
+        assert pa.types.is_run_end_encoded(ar_type) is True
 
         # Scan the arrow table, making projections that don't cover the entire table
         # This should be pushed down into arrow to only provide us with the necessary columns
 
-        res = duckdb_cursor.query(
+        duckdb_cursor.query(
             """
             select {} from arrow_tbl
         """.format(
@@ -293,8 +290,8 @@ class TestArrowREE(object):
         structured_chunks = [pa.StructArray.from_arrays([y for y in x], names=names) for x in zipped]
         structured = pa.chunked_array(structured_chunks)
 
-        arrow_tbl = pa.Table.from_arrays([structured], names=['ree'])
-        result = duckdb_cursor.query("select * from arrow_tbl").arrow()
+        pa.Table.from_arrays([structured], names=['ree'])
+        duckdb_cursor.query("select * from arrow_tbl").arrow()
 
         expected = duckdb_cursor.query("select {'ree': ree, 'a': a, 'b': b, 'c': c} as s from tbl").fetchall()
         actual = duckdb_cursor.query("select * from result").fetchall()
@@ -344,8 +341,8 @@ class TestArrowREE(object):
             structured_chunks.append(new_array)
 
         structured = pa.chunked_array(structured_chunks)
-        arrow_tbl = pa.Table.from_arrays([structured], names=['ree'])
-        result = duckdb_cursor.query("select * from arrow_tbl").arrow()
+        pa.Table.from_arrays([structured], names=['ree'])
+        duckdb_cursor.query("select * from arrow_tbl").arrow()
 
         # Recreate the same result set
         expected = []
@@ -388,7 +385,6 @@ class TestArrowREE(object):
         columns[0] = pc.run_end_encode(columns[0])
 
         # Create a (chunked) MapArray from the chunked arrays (columns) of the ArrowTable
-        names = unstructured.column_names
         iterables = [x.iterchunks() for x in columns]
         zipped = zip(*iterables)
 

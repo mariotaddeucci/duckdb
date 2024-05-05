@@ -342,10 +342,9 @@ def setup_data_files(data_files):
         if len(splits) == 1:
             # no directory specified
             directory = ""
-            fname = normalized_fpath
         else:
             directory = splits[0]
-            fname = splits[1]
+            splits[1]
         if directory not in directory_map:
             directory_map[directory] = []
         directory_map[directory].append(normalized_fpath)

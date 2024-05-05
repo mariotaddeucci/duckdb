@@ -15,17 +15,14 @@
 # limitations under the License.
 #
 
-from ..exception import ContributionsAcceptedError
-from typing import Callable, TYPE_CHECKING, overload, Dict, Union
+from typing import Callable, Dict, Union, overload
 
+from ..exception import ContributionsAcceptedError
+from ._typing import ColumnOrName
 from .column import Column
-from .session import SparkSession
 from .dataframe import DataFrame
 from .functions import _to_column
-from ._typing import ColumnOrName
-
-if TYPE_CHECKING:
-    from ._typing import LiteralType
+from .session import SparkSession
 
 __all__ = ["GroupedData", "Grouping"]
 
@@ -53,8 +50,8 @@ class Grouping:
     def __init__(self, *cols: "ColumnOrName", **kwargs):
         self._type = ""
         self._cols = [_to_column(x) for x in cols]
-        if 'special' in kwargs:
-            special = kwargs['special']
+        if "special" in kwargs:
+            special = kwargs["special"]
             accepted_special = ["cube", "rollup"]
             assert special in accepted_special
             self._type = special
@@ -66,7 +63,7 @@ class Grouping:
     def __str__(self):
         columns = self.get_columns()
         if self._type:
-            return self._type + '(' + columns + ')'
+            return self._type + "(" + columns + ")"
         return columns
 
 
@@ -300,12 +297,10 @@ class GroupedData:
         """
 
     @overload
-    def agg(self, *exprs: Column) -> DataFrame:
-        ...
+    def agg(self, *exprs: Column) -> DataFrame: ...
 
     @overload
-    def agg(self, __exprs: Dict[str, str]) -> DataFrame:
-        ...
+    def agg(self, __exprs: Dict[str, str]) -> DataFrame: ...
 
     def agg(self, *exprs: Union[Column, Dict[str, str]]) -> DataFrame:
         """Compute aggregates and returns the result as a :class:`DataFrame`.
@@ -402,7 +397,9 @@ class GroupedData:
             raise ContributionsAcceptedError
         else:
             # Columns
-            assert all(isinstance(c, Column) for c in exprs), "all exprs should be Column"
+            assert all(
+                isinstance(c, Column) for c in exprs
+            ), "all exprs should be Column"
             expressions = list(self._grouping._cols)
             expressions.extend([x.expr for x in exprs])
             group_by = str(self._grouping)

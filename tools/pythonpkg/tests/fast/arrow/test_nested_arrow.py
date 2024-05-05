@@ -4,7 +4,6 @@ try:
     import pyarrow as pa
     import pyarrow.parquet
     import numpy as np
-    import pandas as pd
     import pytest
 
     can_run = True
@@ -181,14 +180,14 @@ class TestArrowNested(object):
             duckdb.InvalidInputException,
             match="Arrow map contains duplicate key, which isn't supported by DuckDB map type",
         ):
-            rel = duckdb.from_arrow(arrow_table).fetchall()
+            duckdb.from_arrow(arrow_table).fetchall()
 
     def test_null_map_arrow_to_duckdb(self, duckdb_cursor):
         if not can_run:
             return
         map_type = pa.map_(pa.int32(), pa.int32())
         values = [None, [(5, 42)]]
-        arrow_table = pa.table({'detail': pa.array(values, map_type)})
+        pa.table({'detail': pa.array(values, map_type)})
         res = duckdb_cursor.sql("select * from arrow_table").fetchall()
         assert res == [(None,), ({'key': [5], 'value': [42]},)]
 

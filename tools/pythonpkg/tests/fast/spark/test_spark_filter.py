@@ -3,20 +3,13 @@ import pytest
 _ = pytest.importorskip("duckdb.experimental.spark")
 
 from duckdb.experimental.spark.sql.types import (
-    LongType,
     StructType,
-    BooleanType,
     StructField,
     StringType,
-    IntegerType,
-    LongType,
     Row,
     ArrayType,
-    MapType,
 )
-from duckdb.experimental.spark.sql.functions import col, struct, when, lit, array_contains
-import duckdb
-import re
+from duckdb.experimental.spark.sql.functions import col, array_contains
 
 
 class TestDataFrameFilter(object):
@@ -101,7 +94,7 @@ class TestDataFrameFilter(object):
         for item in res:
             assert item.state != 'OH' and item.state != 'NY'
 
-        df2 = df.filter(df.state.isin(li) == False)
+        df2 = df.filter(df.state.isin(li) is False)
         res2 = df2.collect()
         assert res2 == res
 
