@@ -71,9 +71,7 @@ class CompilerLauncherMixin:
                 *args,
                 **kwargs,
             ):
-                return original_link(
-                    target_desc, [get_short_path(x) for x in objects], *args, **kwargs
-                )
+                return original_link(target_desc, [get_short_path(x) for x in objects], *args, **kwargs)
 
             original_link = self.compiler.link
             self.compiler.link = link_with_short_paths
@@ -274,9 +272,7 @@ if len(existing_duckdb_dir) == 0:
     source_files = main_source_files
 
     # check if amalgamation exists
-    if os.path.isfile(
-        os.path.join(script_path, "..", "..", "scripts", "amalgamation.py")
-    ):
+    if os.path.isfile(os.path.join(script_path, "..", "..", "scripts", "amalgamation.py")):
         # amalgamation exists: compiling from source directory
         # copy all source files to the current directory
         sys.path.append(os.path.join(script_path, "..", "..", "scripts"))
@@ -292,8 +288,7 @@ if len(existing_duckdb_dir) == 0:
         )
 
         duckdb_sources = [
-            os.path.sep.join(package_build.get_relative_path(script_path, x).split("/"))
-            for x in source_list
+            os.path.sep.join(package_build.get_relative_path(script_path, x).split("/")) for x in source_list
         ]
         duckdb_sources.sort()
 
@@ -343,15 +338,10 @@ else:
     sys.path.append(os.path.join(script_path, "..", "..", "scripts"))
     import package_build
 
-    include_directories += [
-        os.path.join("..", "..", include)
-        for include in package_build.third_party_includes()
-    ]
+    include_directories += [os.path.join("..", "..", include) for include in package_build.third_party_includes()]
     toolchain_args += ["-I" + x for x in package_build.includes(extensions)]
 
-    result_libraries = package_build.get_libraries(
-        existing_duckdb_dir, libraries, extensions
-    )
+    result_libraries = package_build.get_libraries(existing_duckdb_dir, libraries, extensions)
     library_dirs = [x[0] for x in result_libraries if x[0] is not None]
     libnames = [x[1] for x in result_libraries if x[1] is not None]
 

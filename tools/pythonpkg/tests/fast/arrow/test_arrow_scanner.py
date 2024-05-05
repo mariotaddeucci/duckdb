@@ -23,9 +23,7 @@ class TestArrowScanner(object):
         duckdb_conn = duckdb.connect()
         duckdb_conn.execute("PRAGMA threads=4")
 
-        parquet_filename = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "data", "userdata1.parquet"
-        )
+        parquet_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "userdata1.parquet")
 
         arrow_dataset = pyarrow.dataset.dataset(
             [
@@ -36,9 +34,7 @@ class TestArrowScanner(object):
             format="parquet",
         )
 
-        scanner_filter = (pc.field("first_name") == pc.scalar("Jose")) & (
-            pc.field("salary") > pc.scalar(134708.82)
-        )
+        scanner_filter = (pc.field("first_name") == pc.scalar("Jose")) & (pc.field("salary") > pc.scalar(134708.82))
 
         arrow_scanner = Scanner.from_dataset(arrow_dataset, filter=scanner_filter)
 
@@ -53,9 +49,7 @@ class TestArrowScanner(object):
         duckdb_conn = duckdb.connect()
         duckdb_conn.execute("PRAGMA threads=4")
 
-        parquet_filename = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "data", "userdata1.parquet"
-        )
+        parquet_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "userdata1.parquet")
 
         arrow_dataset = pyarrow.dataset.dataset(
             [
@@ -66,16 +60,11 @@ class TestArrowScanner(object):
             format="parquet",
         )
 
-        scanner_filter = (pc.field("first_name") == pc.scalar("Jose")) & (
-            pc.field("salary") > pc.scalar(134708.82)
-        )
+        scanner_filter = (pc.field("first_name") == pc.scalar("Jose")) & (pc.field("salary") > pc.scalar(134708.82))
 
         Scanner.from_dataset(arrow_dataset, filter=scanner_filter)
 
-        assert (
-            duckdb_conn.execute("select count(*) from arrow_scanner").fetchone()[0]
-            == 12
-        )
+        assert duckdb_conn.execute("select count(*) from arrow_scanner").fetchone()[0] == 12
 
     def test_parallel_scanner_register(self, duckdb_cursor):
         if not can_run:
@@ -84,9 +73,7 @@ class TestArrowScanner(object):
         duckdb_conn = duckdb.connect()
         duckdb_conn.execute("PRAGMA threads=4")
 
-        parquet_filename = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "data", "userdata1.parquet"
-        )
+        parquet_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "userdata1.parquet")
 
         arrow_dataset = pyarrow.dataset.dataset(
             [
@@ -97,9 +84,7 @@ class TestArrowScanner(object):
             format="parquet",
         )
 
-        scanner_filter = (pc.field("first_name") == pc.scalar("Jose")) & (
-            pc.field("salary") > pc.scalar(134708.82)
-        )
+        scanner_filter = (pc.field("first_name") == pc.scalar("Jose")) & (pc.field("salary") > pc.scalar(134708.82))
 
         arrow_scanner = Scanner.from_dataset(arrow_dataset, filter=scanner_filter)
 
@@ -111,9 +96,7 @@ class TestArrowScanner(object):
         if not can_run:
             return
 
-        parquet_filename = os.path.join(
-            os.path.dirname(os.path.realpath(__file__)), "data", "userdata1.parquet"
-        )
+        parquet_filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "data", "userdata1.parquet")
 
         arrow_dataset = pyarrow.dataset.dataset(
             [
@@ -124,9 +107,7 @@ class TestArrowScanner(object):
             format="parquet",
         )
 
-        scanner_filter = (pc.field("first_name") == pc.scalar("Jose")) & (
-            pc.field("salary") > pc.scalar(134708.82)
-        )
+        scanner_filter = (pc.field("first_name") == pc.scalar("Jose")) & (pc.field("salary") > pc.scalar(134708.82))
 
         arrow_scanner = Scanner.from_dataset(arrow_dataset, filter=scanner_filter)
 

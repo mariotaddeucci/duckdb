@@ -340,13 +340,9 @@ class TestAllTypes(object):
         if cur_type in replacement_values:
             result = conn.execute("select " + replacement_values[cur_type]).fetchall()
         elif cur_type in adjusted_values:
-            result = conn.execute(
-                f"select {adjusted_values[cur_type]} from test_all_types()"
-            ).fetchall()
+            result = conn.execute(f"select {adjusted_values[cur_type]} from test_all_types()").fetchall()
         else:
-            result = conn.execute(
-                f'select "{cur_type}" from test_all_types()'
-            ).fetchall()
+            result = conn.execute(f'select "{cur_type}" from test_all_types()').fetchall()
         correct_result = correct_answer_map[cur_type]
         assert recursive_equality(result, correct_result)
 
@@ -606,9 +602,7 @@ class TestAllTypes(object):
         else:
             # assert_equal compares NaN equal, but also compares masked
             # elements equal to any unmasked element
-            if isinstance(result, np.ma.MaskedArray) or isinstance(
-                correct_answer, np.ma.MaskedArray
-            ):
+            if isinstance(result, np.ma.MaskedArray) or isinstance(correct_answer, np.ma.MaskedArray):
                 assert np.all(result.mask == correct_answer.mask)
             np.testing.assert_equal(result, correct_answer)
 
@@ -632,15 +626,11 @@ class TestAllTypes(object):
         if cur_type in replacement_values:
             arrow_table = conn.execute("select " + replacement_values[cur_type]).arrow()
         else:
-            arrow_table = conn.execute(
-                f'select "{cur_type}" from test_all_types()'
-            ).arrow()
+            arrow_table = conn.execute(f'select "{cur_type}" from test_all_types()').arrow()
         if cur_type in enum_types:
             round_trip_arrow_table = conn.execute("select * from arrow_table").arrow()
             result_arrow = conn.execute("select * from arrow_table").fetchall()
-            result_roundtrip = conn.execute(
-                "select * from round_trip_arrow_table"
-            ).fetchall()
+            result_roundtrip = conn.execute("select * from round_trip_arrow_table").fetchall()
             assert recursive_equality(result_arrow, result_roundtrip)
         else:
             round_trip_arrow_table = conn.execute("select * from arrow_table").arrow()
@@ -669,9 +659,7 @@ class TestAllTypes(object):
         if cur_type in replacement_values:
             conn.execute("select " + replacement_values[cur_type]).df()
         elif cur_type in adjusted_values:
-            conn.execute(
-                f"select {adjusted_values[cur_type]} from test_all_types()"
-            ).df()
+            conn.execute(f"select {adjusted_values[cur_type]} from test_all_types()").df()
         else:
             conn.execute(f'select "{cur_type}" from test_all_types()').df()
         print(cur_type)

@@ -28,29 +28,17 @@ class TestArrowNested(object):
             return
 
         # Test Constant List
-        query = (
-            duckdb_cursor.query("SELECT a from (select list_value(3,5,10) as a) as t")
-            .arrow()["a"]
-            .to_numpy()
-        )
+        query = duckdb_cursor.query("SELECT a from (select list_value(3,5,10) as a) as t").arrow()["a"].to_numpy()
         assert query[0][0] == 3
         assert query[0][1] == 5
         assert query[0][2] == 10
 
         # Empty List
-        query = (
-            duckdb_cursor.query("SELECT a from (select list_value() as a) as t")
-            .arrow()["a"]
-            .to_numpy()
-        )
+        query = duckdb_cursor.query("SELECT a from (select list_value() as a) as t").arrow()["a"].to_numpy()
         assert len(query[0]) == 0
 
         # Test Constant List With Null
-        query = (
-            duckdb_cursor.query("SELECT a from (select list_value(3,NULL) as a) as t")
-            .arrow()["a"]
-            .to_numpy()
-        )
+        query = duckdb_cursor.query("SELECT a from (select list_value(3,NULL) as a) as t").arrow()["a"].to_numpy()
         assert query[0][0] == 3
         assert np.isnan(query[0][1])
 
@@ -76,9 +64,7 @@ class TestArrowNested(object):
         data = [
             pyarrow.array([[1], None, [2]], type=pyarrow.list_(pyarrow.int64(), 1)),
             pyarrow.array([[1], None, [2]], type=pyarrow.large_list(pyarrow.int64())),
-            pyarrow.array(
-                [[1, 2, 3], None, [2, 1]], type=pyarrow.list_(pyarrow.int64())
-            ),
+            pyarrow.array([[1, 2, 3], None, [2, 1]], type=pyarrow.list_(pyarrow.int64())),
         ]
         arrow_table = pa.Table.from_arrays([data[0], data[1], data[2]], ["a", "b", "c"])
         rel = duckdb.from_arrow(arrow_table)
@@ -104,15 +90,9 @@ class TestArrowNested(object):
         if not can_run:
             return
         # Integers
-        compare_results(
-            duckdb_cursor, "SELECT a from (select list_value(3,5,10) as a) as t"
-        )
-        compare_results(
-            duckdb_cursor, "SELECT a from (select list_value(3,5,NULL) as a) as t"
-        )
-        compare_results(
-            duckdb_cursor, "SELECT a from (select list_value(NULL,NULL,NULL) as a) as t"
-        )
+        compare_results(duckdb_cursor, "SELECT a from (select list_value(3,5,10) as a) as t")
+        compare_results(duckdb_cursor, "SELECT a from (select list_value(3,5,NULL) as a) as t")
+        compare_results(duckdb_cursor, "SELECT a from (select list_value(NULL,NULL,NULL) as a) as t")
         compare_results(duckdb_cursor, "SELECT a from (select list_value() as a) as t")
         # Strings
         compare_results(
@@ -172,9 +152,7 @@ class TestArrowNested(object):
             duckdb_cursor,
             "SELECT a from (SELECT STRUCT_PACK(a := NULL, b := 43) as a) as t",
         )
-        compare_results(
-            duckdb_cursor, "SELECT a from (SELECT STRUCT_PACK(a := NULL) as a) as t"
-        )
+        compare_results(duckdb_cursor, "SELECT a from (SELECT STRUCT_PACK(a := NULL) as a) as t")
         compare_results(
             duckdb_cursor,
             "SELECT a from (SELECT STRUCT_PACK(a := i, b := i) as a FROM range(10000) tbl(i)) as t",
@@ -261,9 +239,7 @@ class TestArrowNested(object):
         assert arrow_to_pandas(
             duckdb_cursor,
             "SELECT MAP(LIST_VALUE({'i':1,'j':2},{'i':3,'j':4}),LIST_VALUE({'i':1,'j':2},{'i':3,'j':4})) as a",
-        ) == [
-            [({"i": 1, "j": 2}, {"i": 1, "j": 2}), ({"i": 3, "j": 4}, {"i": 3, "j": 4})]
-        ]
+        ) == [[({"i": 1, "j": 2}, {"i": 1, "j": 2}), ({"i": 3, "j": 4}, {"i": 3, "j": 4})]]
 
     def test_frankstein_nested(self, duckdb_cursor):
         if not can_run:
@@ -305,9 +281,7 @@ class TestArrowNested(object):
         )
 
         # Null checks on lists with structs
-        compare_results(
-            duckdb_cursor, "SELECT [{'i':1,'j':[2,3]},NULL,{'i':1,'j':[2,3]}]"
-        )
+        compare_results(duckdb_cursor, "SELECT [{'i':1,'j':[2,3]},NULL,{'i':1,'j':[2,3]}]")
 
         # MAP that is NULL entirely
         compare_results(

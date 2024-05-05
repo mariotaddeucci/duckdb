@@ -84,9 +84,7 @@ class TestArrowFetch(object):
         duckdb_conn.execute("PREPARE s1 AS INSERT INTO test VALUES ($1), ($2 / 2)")
 
         for value in range(10000):
-            duckdb_conn.execute(
-                "EXECUTE s1(" + str(value) + "," + str(value * 2) + ");"
-            )
+            duckdb_conn.execute("EXECUTE s1(" + str(value) + "," + str(value * 2) + ");")
 
         check_equal(duckdb_conn)
 

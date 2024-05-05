@@ -130,9 +130,7 @@ class TestDateTimeTimeStamp(object):
         pd.DataFrame(
             {'ts': pd.Series(data=[pd.Timestamp(datetime.datetime(1990, 12, 21))], dtype=f'datetime64[{unit}]')}
         )
-        pd.DataFrame(
-            {'ts': pd.Series(data=[pd.Timestamp(datetime.datetime(1990, 12, 21))], dtype='datetime64[us]')}
-        )
+        pd.DataFrame({'ts': pd.Series(data=[pd.Timestamp(datetime.datetime(1990, 12, 21))], dtype='datetime64[us]')})
 
         query = """
             select

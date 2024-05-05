@@ -30,9 +30,7 @@ class TestArrowCaseSensitive(object):
         if not can_run:
             return
         data = (pa.array([1], type=pa.int32()), pa.array([1000], type=pa.int32()))
-        arrow_table = pa.Table.from_arrays(
-            [data[0], data[1], data[1]], ["A1", "a1_1", "a1"]
-        )
+        arrow_table = pa.Table.from_arrays([data[0], data[1], data[1]], ["A1", "a1_1", "a1"])
 
         con = duckdb.connect()
         con.register("arrow_tbl", arrow_table)

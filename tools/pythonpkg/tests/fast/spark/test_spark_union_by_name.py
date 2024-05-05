@@ -3,7 +3,6 @@ import pytest
 _ = pytest.importorskip("duckdb.experimental.spark")
 
 
-
 @pytest.fixture
 def df1(spark):
     data = [("James", 34), ("Michael", 56), ("Robert", 30), ("Maria", 24)]

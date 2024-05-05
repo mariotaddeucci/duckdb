@@ -655,9 +655,7 @@ class TestArrowOffsets(object):
 
         # Except the very last element, which is big
 
-        pa.Table.from_pydict(
-            {"col1": tuples}, schema=pa.schema([("col1", pa.struct({"a": pa.list_(pa.string())}))])
-        )
+        pa.Table.from_pydict({"col1": tuples}, schema=pa.schema([("col1", pa.struct({"a": pa.list_(pa.string())}))]))
         res = duckdb_cursor.sql(
             f"""
             SELECT

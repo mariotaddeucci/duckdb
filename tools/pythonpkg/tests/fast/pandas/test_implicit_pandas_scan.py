@@ -7,9 +7,7 @@ from conftest import ArrowPandas, NumpyPandas
 
 import duckdb
 
-numpy_nullable_df = pd.DataFrame(
-    [{"COL1": "val1", "CoL2": 1.05}, {"COL1": "val4", "CoL2": 17}]
-)
+numpy_nullable_df = pd.DataFrame([{"COL1": "val1", "CoL2": 1.05}, {"COL1": "val4", "CoL2": 17}])
 
 try:
     from pandas.compat import pa_version_under7p0

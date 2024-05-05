@@ -20,9 +20,7 @@ class TestArrowTime(object):
             pa.array([1000000], pa.time64("us")),
             pa.array([1000000000], pa.time64("ns")),
         )
-        arrow_table = pa.Table.from_arrays(
-            [data[0], data[1], data[2], data[3]], ["a", "b", "c", "d"]
-        )
+        arrow_table = pa.Table.from_arrays([data[0], data[1], data[2], data[3]], ["a", "b", "c", "d"])
         rel = duckdb.from_arrow(arrow_table).arrow()
         assert rel["a"] == arrow_table["c"]
         assert rel["b"] == arrow_table["c"]
@@ -38,9 +36,7 @@ class TestArrowTime(object):
             pa.array([None], pa.time64("us")),
             pa.array([None], pa.time64("ns")),
         )
-        arrow_table = pa.Table.from_arrays(
-            [data[0], data[1], data[2], data[3]], ["a", "b", "c", "d"]
-        )
+        arrow_table = pa.Table.from_arrays([data[0], data[1], data[2], data[3]], ["a", "b", "c", "d"])
         rel = duckdb.from_arrow(arrow_table).arrow()
         assert rel["a"] == arrow_table["c"]
         assert rel["b"] == arrow_table["c"]
