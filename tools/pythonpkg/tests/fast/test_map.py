@@ -1,5 +1,4 @@
 import duckdb
-import numpy
 import pytest
 from datetime import date, timedelta
 import re
@@ -30,9 +29,9 @@ class TestMap(object):
         conn.execute('CREATE TABLE t (a integer)')
         empty_rel = conn.table('t')
 
-        newdf1 = testrel.map(lambda df: df['col0'].add(42).to_frame())
-        newdf2 = testrel.map(lambda df: df['col0'].astype('string').to_frame())
-        newdf3 = testrel.map(lambda df: df)
+        testrel.map(lambda df: df['col0'].add(42).to_frame())
+        testrel.map(lambda df: df['col0'].astype('string').to_frame())
+        testrel.map(lambda df: df)
 
         # column type differs from bind
         def evil2(df):
@@ -235,4 +234,4 @@ class TestMap(object):
 
         con = duckdb.connect()
         with pytest.raises(duckdb.InvalidInputException):
-            rel = con.sql('select 42').map(basic_function)
+            con.sql('select 42').map(basic_function)

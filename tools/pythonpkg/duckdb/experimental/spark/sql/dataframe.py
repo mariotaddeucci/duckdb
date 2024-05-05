@@ -25,7 +25,7 @@ from .types import Row, StructType
 if TYPE_CHECKING:
     from pandas.core.frame import DataFrame as PandasDataFrame
 
-    from .group import GroupedData, Grouping
+    from .group import GroupedData
     from .session import SparkSession
 
 from ..errors import PySparkValueError

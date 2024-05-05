@@ -1,12 +1,12 @@
 import duckdb
 
 try:
+    import numpy
     import pyarrow
     import pyarrow.parquet
-    import numpy as np
 
     can_run = True
-except:
+except Exception:
     can_run = False
 
 
@@ -23,7 +23,7 @@ def check_result(result, answers):
         db_result = result.fetchone()
         cq_results = q_res.split("|")
         # The end of the rows, continue
-        if cq_results == [''] and str(db_result) == 'None' or str(db_result[0]) == 'None':
+        if cq_results == [""] and str(db_result) == "None" or str(db_result[0]) == "None":
             continue
         ans_result = [munge(cell) for cell in cq_results]
         db_result = [munge(cell) for cell in db_result]
@@ -37,7 +37,16 @@ class TestTPCHArrow(object):
         if not can_run:
             return
 
-        tpch_tables = ['part', 'partsupp', 'supplier', 'customer', 'lineitem', 'orders', 'nation', 'region']
+        tpch_tables = [
+            "part",
+            "partsupp",
+            "supplier",
+            "customer",
+            "lineitem",
+            "orders",
+            "nation",
+            "region",
+        ]
         arrow_tables = []
 
         duckdb_conn = duckdb.connect()
@@ -67,7 +76,16 @@ class TestTPCHArrow(object):
         if not can_run:
             return
 
-        tpch_tables = ['part', 'partsupp', 'supplier', 'customer', 'lineitem', 'orders', 'nation', 'region']
+        tpch_tables = [
+            "part",
+            "partsupp",
+            "supplier",
+            "customer",
+            "lineitem",
+            "orders",
+            "nation",
+            "region",
+        ]
         arrow_tables = []
 
         duckdb_conn = duckdb.connect()
@@ -95,7 +113,16 @@ class TestTPCHArrow(object):
         if not can_run:
             return
 
-        tpch_tables = ['part', 'partsupp', 'supplier', 'customer', 'lineitem', 'orders', 'nation', 'region']
+        tpch_tables = [
+            "part",
+            "partsupp",
+            "supplier",
+            "customer",
+            "lineitem",
+            "orders",
+            "nation",
+            "region",
+        ]
         arrow_tables = []
 
         duckdb_conn = duckdb.connect()

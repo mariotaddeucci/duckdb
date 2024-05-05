@@ -3,7 +3,6 @@ import pytest
 import tempfile
 import os
 import gc
-import pytest
 from conftest import NumpyPandas, ArrowPandas
 
 
@@ -14,7 +13,7 @@ class TestPandasUnregister(object):
         connection = duckdb.connect(":memory:")
         connection.register("dataframe", df)
 
-        df2 = connection.execute("SELECT * FROM dataframe;").fetchdf()
+        connection.execute("SELECT * FROM dataframe;").fetchdf()
         connection.unregister("dataframe")
         with pytest.raises(duckdb.CatalogException, match='Table with name dataframe does not exist'):
             connection.execute("SELECT * FROM dataframe;").fetchdf()

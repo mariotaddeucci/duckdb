@@ -54,7 +54,7 @@ class TestNumpyNullableTypes(object):
         for letter, dtype in zip(string.ascii_lowercase, data_types):
             data[letter] = base_df.a.astype(dtype)
 
-        df = pd.DataFrame.from_dict(data)
+        pd.DataFrame.from_dict(data)
         conn = duckdb.connect()
         out_df = conn.execute('select * from df').df()
 

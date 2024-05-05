@@ -1,13 +1,14 @@
-import duckdb
 import pytest
+
+import duckdb
 
 try:
     import pyarrow as pa
 
     can_run = True
-except:
-    can_run = False
-from conftest import NumpyPandas, ArrowPandas
+except Exception:
+from conftest import ArrowPandas, NumpyPandas
+from conftest import ArrowPandas, NumpyPandas
 
 
 class Test3654(object):

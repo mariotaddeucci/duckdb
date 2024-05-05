@@ -3,7 +3,6 @@ import pytest
 _ = pytest.importorskip("duckdb.experimental.spark")
 
 from duckdb.experimental.spark.sql.types import (
-    LongType,
     StructType,
     BooleanType,
     StructField,
@@ -15,8 +14,6 @@ from duckdb.experimental.spark.sql.types import (
     MapType,
 )
 from duckdb.experimental.spark.sql.functions import col, struct, when
-import duckdb
-import re
 
 from duckdb.experimental.spark.errors import PySparkValueError, PySparkTypeError
 
@@ -267,7 +264,6 @@ class TestDataFrame(object):
         )
 
     def test_df_columns(self, spark):
-        from duckdb.experimental.spark.sql.functions import col, struct, when
 
         structureData = [
             (("James", "", "Smith"), "36636", "M", 3100),
@@ -313,7 +309,7 @@ class TestDataFrame(object):
     def test_array_and_map_type(self, spark):
         """Array & Map"""
 
-        arrayStructureSchema = StructType(
+        StructType(
             [
                 StructField(
                     'name',

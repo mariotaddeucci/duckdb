@@ -1,13 +1,10 @@
 import duckdb
-import os
-import pytest
 
 try:
-    import pyarrow as pa
     import pyarrow.dataset as ds
 
     can_run = True
-except:
+except Exception:
     can_run = False
 
 

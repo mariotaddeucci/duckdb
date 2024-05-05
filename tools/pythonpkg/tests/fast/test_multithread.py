@@ -1,11 +1,14 @@
-import duckdb
-import pytest
-import threading
-import queue as Queue
-import numpy as np
-from conftest import NumpyPandas, ArrowPandas
 import os
+import queue as Queue
+import threading
 from typing import List
+
+import duckdb
+import numpy as np
+import pytest
+from conftest import ArrowPandas, NumpyPandas
+
+import duckdb
 
 try:
     import pyarrow as pa
@@ -21,7 +24,7 @@ def connect_duck(duckdb_conn):
 
 
 def everything_succeeded(results: List[bool]):
-    return all([result == True for result in results])
+    return all([result is True for result in results])
 
 
 class DuckDBThreaded:
@@ -60,9 +63,9 @@ class DuckDBThreaded:
 
 def execute_query_same_connection(duckdb_conn, queue, pandas):
     try:
-        out = duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)')
+        duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)')
         queue.put(False)
-    except:
+    except Exception:
         queue.put(True)
 
 
@@ -72,7 +75,7 @@ def execute_query(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)')
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -82,7 +85,7 @@ def insert_runtime_error(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('insert into T values (42), (84), (NULL), (128)')
         queue.put(False)
-    except:
+    except Exception:
         queue.put(True)
 
 
@@ -115,7 +118,7 @@ def execute_many_query(duckdb_conn, queue, pandas):
             purchases,
         )
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -125,7 +128,7 @@ def fetchone_query(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)').fetchone()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -135,7 +138,7 @@ def fetchall_query(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)').fetchall()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -145,7 +148,7 @@ def conn_close(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.close()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -155,7 +158,7 @@ def fetchnp_query(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)').fetchnumpy()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -165,7 +168,7 @@ def fetchdf_query(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)').fetchdf()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -175,7 +178,7 @@ def fetchdf_chunk_query(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)').fetch_df_chunk()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -185,7 +188,7 @@ def fetch_arrow_query(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)').fetch_arrow_table()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -195,7 +198,7 @@ def fetch_record_batch_query(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.execute('select i from (values (42), (84), (NULL), (128)) tbl(i)').fetch_record_batch()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -210,7 +213,7 @@ def transaction_query(duckdb_conn, queue, pandas):
         duckdb_conn.execute('insert into T values (42), (84), (NULL), (128)')
         duckdb_conn.commit()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -222,7 +225,7 @@ def df_append(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.append('T', df)
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -233,7 +236,7 @@ def df_register(duckdb_conn, queue, pandas):
     try:
         duckdb_conn.register('T', df)
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -245,7 +248,7 @@ def df_unregister(duckdb_conn, queue, pandas):
         duckdb_conn.register('T', df)
         duckdb_conn.unregister('T')
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -257,7 +260,7 @@ def arrow_register_unregister(duckdb_conn, queue, pandas):
         duckdb_conn.register('T', arrow_tbl)
         duckdb_conn.unregister('T')
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -266,9 +269,9 @@ def table(duckdb_conn, queue, pandas):
     duckdb_conn = duckdb.connect()
     duckdb_conn.execute("CREATE TABLE T ( i INTEGER)")
     try:
-        out = duckdb_conn.table('T')
+        duckdb_conn.table('T')
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -278,9 +281,9 @@ def view(duckdb_conn, queue, pandas):
     duckdb_conn.execute("CREATE TABLE T ( i INTEGER)")
     duckdb_conn.execute("CREATE VIEW V as (SELECT * FROM T)")
     try:
-        out = duckdb_conn.values([5, 'five'])
+        duckdb_conn.values([5, 'five'])
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -288,9 +291,9 @@ def values(duckdb_conn, queue, pandas):
     # Get a new connection
     duckdb_conn = duckdb.connect()
     try:
-        out = duckdb_conn.values([5, 'five'])
+        duckdb_conn.values([5, 'five'])
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -298,20 +301,20 @@ def from_query(duckdb_conn, queue, pandas):
     # Get a new connection
     duckdb_conn = duckdb.connect()
     try:
-        out = duckdb_conn.from_query("select i from (values (42), (84), (NULL), (128)) tbl(i)")
+        duckdb_conn.from_query("select i from (values (42), (84), (NULL), (128)) tbl(i)")
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
 def from_df(duckdb_conn, queue, pandas):
     # Get a new connection
     duckdb_conn = duckdb.connect()
-    df = pandas.DataFrame(['bla', 'blabla'] * 10, columns=['A'])
+    pandas.DataFrame(['bla', 'blabla'] * 10, columns=['A'])
     try:
-        out = duckdb_conn.execute("select * from df").fetchall()
+        duckdb_conn.execute("select * from df").fetchall()
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -320,9 +323,9 @@ def from_arrow(duckdb_conn, queue, pandas):
     duckdb_conn = duckdb.connect()
     arrow_tbl = pa.Table.from_pydict({'my_column': pa.array([1, 2, 3, 4, 5], type=pa.int64())})
     try:
-        out = duckdb_conn.from_arrow(arrow_tbl)
+        duckdb_conn.from_arrow(arrow_tbl)
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -331,9 +334,9 @@ def from_csv_auto(duckdb_conn, queue, pandas):
     duckdb_conn = duckdb.connect()
     filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'integers.csv')
     try:
-        out = duckdb_conn.from_csv_auto(filename)
+        duckdb_conn.from_csv_auto(filename)
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -342,9 +345,9 @@ def from_parquet(duckdb_conn, queue, pandas):
     duckdb_conn = duckdb.connect()
     filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', 'binary_string.parquet')
     try:
-        out = duckdb_conn.from_parquet(filename)
+        duckdb_conn.from_parquet(filename)
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -358,7 +361,7 @@ def description(duckdb_conn, queue, pandas):
     try:
         rel.description
         queue.put(True)
-    except:
+    except Exception:
         queue.put(False)
 
 
@@ -368,7 +371,7 @@ def cursor(duckdb_conn, queue, pandas):
     try:
         cx.execute('CREATE TABLE test (i bool, j TIME, k VARCHAR)')
         queue.put(False)
-    except:
+    except Exception:
         queue.put(True)
 
 
@@ -504,9 +507,9 @@ class TestDuckMultithread(object):
     @pytest.mark.parametrize('pandas', [NumpyPandas(), ArrowPandas()])
     def test_cursor(self, duckdb_cursor, pandas):
         def only_some_succeed(results: List[bool]):
-            if not any([result == True for result in results]):
+            if not any([result is True for result in results]):
                 return False
-            if all([result == True for result in results]):
+            if all([result is True for result in results]):
                 return False
             return True
 

@@ -28,9 +28,7 @@ from duckdb.value.constant import (
     TimestampSecondValue,
     TimestampMilisecondValue,
     TimestampNanosecondValue,
-    TimestampTimeZoneValue,
     TimeValue,
-    TimeTimeZoneValue,
 )
 import uuid
 import datetime
@@ -55,12 +53,7 @@ from duckdb.typing import (
     DOUBLE,
     DATE,
     TIMESTAMP,
-    TIMESTAMP_MS,
-    TIMESTAMP_NS,
-    TIMESTAMP_S,
     TIME,
-    TIME_TZ,
-    TIMESTAMP_TZ,
     VARCHAR,
     BLOB,
     BIT,
@@ -187,7 +180,8 @@ class TestValue(object):
         value = Value(test_value, target_type)
         con = duckdb.connect()
 
-        work = lambda: con.execute('select typeof(a) from (select $1) tbl(a)', [value]).fetchall()
+        def work():
+            return con.execute('select typeof(a) from (select $1) tbl(a)', [value]).fetchall()
 
         if expected_conversion_success:
             res = work()

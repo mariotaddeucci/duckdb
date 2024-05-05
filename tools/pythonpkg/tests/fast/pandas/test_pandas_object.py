@@ -2,7 +2,6 @@ import pandas as pd
 import duckdb
 import datetime
 import numpy as np
-import random
 
 
 class TestPandasObject(object):
@@ -15,7 +14,7 @@ class TestPandasObject(object):
         assert df == [(1, None, 2), (1, 1.1, 2), (1, 1.1, 2), (1, 1.1, 2)]
 
     def test_tuple_to_list(self, duckdb_cursor):
-        tuple_df = pd.DataFrame.from_dict(
+        pd.DataFrame.from_dict(
             dict(
                 nums=[
                     (
@@ -36,7 +35,7 @@ class TestPandasObject(object):
         assert res == [([1, 2, 3],), ([4, 5, 6],)]
 
     def test_2273(self, duckdb_cursor):
-        df_in = pd.DataFrame([[datetime.date(1992, 7, 30)]])
+        pd.DataFrame([[datetime.date(1992, 7, 30)]])
         assert duckdb_cursor.query("Select * from df_in").fetchall() == [(datetime.date(1992, 7, 30),)]
 
     def test_object_to_string_with_stride(self, duckdb_cursor):

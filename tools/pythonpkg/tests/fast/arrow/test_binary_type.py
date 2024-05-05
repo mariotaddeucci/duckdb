@@ -1,13 +1,12 @@
 import duckdb
-import os
 
 try:
+    import numpy
     import pyarrow as pa
-    from pyarrow import parquet as pq
-    import numpy as np
+    import pyarrow.parquet
 
     can_run = True
-except:
+except Exception:
     can_run = False
 
 

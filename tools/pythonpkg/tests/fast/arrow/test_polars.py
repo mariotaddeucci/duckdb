@@ -21,7 +21,7 @@ class TestPolars(object):
         pl_testing.assert_frame_equal(df, polars_result)
 
         # now do the same for a lazy dataframe
-        lazy_df = df.lazy()
+        df.lazy()
         lazy_result = duckdb_cursor.sql('SELECT * FROM lazy_df').pl()
         pl_testing.assert_frame_equal(df, lazy_result)
 

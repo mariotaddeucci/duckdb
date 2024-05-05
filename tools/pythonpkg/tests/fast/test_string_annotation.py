@@ -1,7 +1,5 @@
-import duckdb
 import pytest
 import sys
-from typing import Union
 
 
 def make_annotated_function(type: str):
@@ -19,7 +17,6 @@ def make_annotated_function(type: str):
 
 
 def python_version_lower_than_3_10():
-    import sys
 
     if sys.version_info[0] < 3:
         return True

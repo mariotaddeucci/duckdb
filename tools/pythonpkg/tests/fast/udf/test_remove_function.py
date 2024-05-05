@@ -1,15 +1,8 @@
 import duckdb
-import os
 import pytest
 
 pd = pytest.importorskip("pandas")
 pa = pytest.importorskip("pyarrow")
-from typing import Union
-import pyarrow.compute as pc
-import uuid
-import datetime
-import numpy as np
-import cmath
 
 from duckdb.typing import *
 
@@ -54,7 +47,7 @@ class TestRemoveFunction(object):
         with pytest.raises(
             duckdb.InvalidInputException, match='Attempting to execute an unsuccessful or closed pending query result'
         ):
-            res = rel.fetchall()
+            rel.fetchall()
 
     def test_use_after_remove_and_recreation(self):
         def func(x: str) -> str:
@@ -64,7 +57,7 @@ class TestRemoveFunction(object):
         con.create_function('func', func)
 
         with pytest.raises(duckdb.BinderException, match='No function matches the given name'):
-            rel1 = con.sql('select func(42)')
+            con.sql('select func(42)')
         rel2 = con.sql("select func('test'::VARCHAR)")
         con.remove_function('func')
 
@@ -73,7 +66,7 @@ class TestRemoveFunction(object):
 
         con.create_function('func', also_func)
         with pytest.raises(duckdb.InvalidInputException, match='No function matches the given name'):
-            res = rel2.fetchall()
+            rel2.fetchall()
 
     def test_overwrite_name(self):
         def func(x):

@@ -1,8 +1,5 @@
-from re import S
 import duckdb
-import os
 import pytest
-import tempfile
 from conftest import pandas_supports_arrow_backend
 import sys
 from packaging.version import Version
@@ -49,7 +46,7 @@ def numeric_operators(connection, data_type, tbl_name, create_table):
     """
     )
     duck_tbl = connection.table(tbl_name)
-    arrow_table = create_table(duck_tbl)
+    create_table(duck_tbl)
 
     # Try ==
     assert connection.execute("SELECT count(*) from arrow_table where a = 1").fetchone()[0] == 1
@@ -82,7 +79,7 @@ def numeric_operators(connection, data_type, tbl_name, create_table):
 
 def numeric_check_or_pushdown(connection, tbl_name, create_table):
     duck_tbl = connection.table(tbl_name)
-    arrow_table = create_table(duck_tbl)
+    create_table(duck_tbl)
 
     # Multiple column in the root OR node, don't push down
     query_res = connection.execute(
@@ -134,7 +131,7 @@ def numeric_check_or_pushdown(connection, tbl_name, create_table):
 
 def string_check_or_pushdown(connection, tbl_name, create_table):
     duck_tbl = connection.table(tbl_name)
-    arrow_table = create_table(duck_tbl)
+    create_table(duck_tbl)
 
     # Check string zonemap
     query_res = connection.execute("EXPLAIN SELECT * FROM arrow_table WHERE a >= '1' OR a <= '10'").fetchall()
@@ -205,7 +202,7 @@ class TestArrowFilterPushdown(object):
         """
         )
         duck_tbl = duckdb_cursor.table("test_varchar")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         # Try ==
         assert duckdb_cursor.execute("SELECT count(*) from arrow_table where a = '1'").fetchone()[0] == 1
@@ -257,7 +254,7 @@ class TestArrowFilterPushdown(object):
         """
         )
         duck_tbl = duckdb_cursor.table("test_bool")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         # Try ==
         assert duckdb_cursor.execute("SELECT count(*) from arrow_table where a = True").fetchone()[0] == 2
@@ -293,7 +290,7 @@ class TestArrowFilterPushdown(object):
         """
         )
         duck_tbl = duckdb_cursor.table("test_time")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         # Try ==
         assert duckdb_cursor.execute("SELECT count(*) from arrow_table where a ='00:01:00'").fetchone()[0] == 1
@@ -351,7 +348,7 @@ class TestArrowFilterPushdown(object):
         """
         )
         duck_tbl = duckdb_cursor.table("test_timestamp")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         # Try ==
         assert (
@@ -421,7 +418,7 @@ class TestArrowFilterPushdown(object):
             """
         )
         duck_tbl = duckdb_cursor.table("test_timestamptz")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         # Try ==
         assert (
@@ -495,7 +492,7 @@ class TestArrowFilterPushdown(object):
         expected = duckdb_cursor.table('tbl').fetchall()
         filter = "i > 0"
         rel = duckdb_cursor.table('tbl')
-        arrow_table = create_table(rel)
+        create_table(rel)
         actual = duckdb_cursor.sql(f"select * from arrow_table where {filter}").fetchall()
         assert expected == actual
 
@@ -511,7 +508,6 @@ class TestArrowFilterPushdown(object):
     )
     def test_9371(self, duckdb_cursor, tmp_path):
         import datetime
-        import pathlib
 
         # connect to an in-memory database
         duckdb_cursor.execute("SET TimeZone='UTC';")
@@ -529,8 +525,8 @@ class TestArrowFilterPushdown(object):
         df = df.set_index("ts")  # SET INDEX! (It all works correctly when the index is not set)
         df.to_parquet(str(file_path))
 
-        my_arrow_dataset = ds.dataset(str(file_path))
-        res = duckdb_cursor.execute("SELECT * FROM my_arrow_dataset WHERE ts = ?", parameters=[dt]).arrow()
+        ds.dataset(str(file_path))
+        duckdb_cursor.execute("SELECT * FROM my_arrow_dataset WHERE ts = ?", parameters=[dt]).arrow()
         output = duckdb_cursor.sql("select * from res").fetchall()
         expected = [(1, dt), (2, dt), (3, dt)]
         assert output == expected
@@ -556,7 +552,7 @@ class TestArrowFilterPushdown(object):
         """
         )
         duck_tbl = duckdb_cursor.table("test_date")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         # Try ==
         assert duckdb_cursor.execute("SELECT count(*) from arrow_table where a = '2000-01-01'").fetchone()[0] == 1
@@ -607,7 +603,7 @@ class TestArrowFilterPushdown(object):
             }
         )
         rel = duckdb.from_df(df)
-        arrow_table = create_table(rel)
+        create_table(rel)
 
         # Try ==
         assert duckdb_cursor.execute("SELECT count(*) from arrow_table where a = '\x01'").fetchone()[0] == 1
@@ -659,7 +655,7 @@ class TestArrowFilterPushdown(object):
         """
         )
         duck_tbl = duckdb_cursor.table("test_int")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         assert duckdb_cursor.execute("SELECT * FROM arrow_table VALUES where a = 1").fetchall() == [(1, 1, 1)]
 
@@ -699,7 +695,7 @@ class TestArrowFilterPushdown(object):
         """
         )
         duck_test_table = duckdb_cursor.table("test")
-        arrow_table = create_table(duck_test_table)
+        create_table(duck_test_table)
 
         # PR 4817 - remove filter columns that are unused in the remainder of the query plan from the table function
         query_res = duckdb_cursor.execute(
@@ -735,7 +731,7 @@ class TestArrowFilterPushdown(object):
         )
 
         duck_tbl = duckdb_cursor.table("test_structs")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         # Ensure that the filter is pushed down
         query_res = duckdb_cursor.execute(
@@ -806,7 +802,7 @@ class TestArrowFilterPushdown(object):
         )
 
         duck_tbl = duckdb_cursor.table("test_nested_structs")
-        arrow_table = create_table(duck_tbl)
+        create_table(duck_tbl)
 
         # Ensure that the filter is pushed down
         query_res = duckdb_cursor.execute(

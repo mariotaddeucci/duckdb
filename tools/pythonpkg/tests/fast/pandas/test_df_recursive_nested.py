@@ -1,8 +1,5 @@
 import duckdb
-import datetime
-import numpy as np
 import pytest
-import copy
 from conftest import NumpyPandas, ArrowPandas
 
 NULL = None
@@ -12,7 +9,7 @@ def check_equal(conn, df, reference_query):
     duckdb_conn = duckdb.connect()
     duckdb_conn.execute(reference_query)
     res = duckdb_conn.query('SELECT * FROM tbl').fetchall()
-    df_res = duckdb_conn.query('SELECT * FROM tbl').df()
+    duckdb_conn.query('SELECT * FROM tbl').df()
     out = conn.sql("SELECT * FROM df").fetchall()
     assert res == out
 

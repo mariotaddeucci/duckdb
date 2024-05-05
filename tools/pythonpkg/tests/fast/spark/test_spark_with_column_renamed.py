@@ -3,20 +3,12 @@ import pytest
 _ = pytest.importorskip("duckdb.experimental.spark")
 
 from duckdb.experimental.spark.sql.types import (
-    LongType,
     StructType,
-    BooleanType,
     StructField,
     StringType,
     IntegerType,
-    LongType,
-    Row,
-    ArrayType,
-    MapType,
 )
-from duckdb.experimental.spark.sql.functions import col, struct, when, lit
-import duckdb
-import re
+from duckdb.experimental.spark.sql.functions import col
 
 
 class TestWithColumnRenamed(object):
@@ -28,7 +20,6 @@ class TestWithColumnRenamed(object):
             (('Maria', 'Anne', 'Jones'), '1967-12-01', 'F', 4000),
             (('Jen', 'Mary', 'Brown'), '1980-02-17', 'F', -1),
         ]
-        from duckdb.experimental.spark.sql.types import StructType, StructField, StringType, IntegerType
 
         schema = StructType(
             [
@@ -56,7 +47,7 @@ class TestWithColumnRenamed(object):
         assert 'DateOfBirth' in df2
         assert 'salary_amount' in df2
 
-        schema2 = StructType(
+        StructType(
             [
                 StructField(
                     'full name',

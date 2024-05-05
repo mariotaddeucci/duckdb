@@ -25,7 +25,7 @@ from .functions import _to_column
 from ._typing import ColumnOrName
 
 if TYPE_CHECKING:
-    from ._typing import LiteralType
+    pass
 
 __all__ = ["GroupedData", "Grouping"]
 

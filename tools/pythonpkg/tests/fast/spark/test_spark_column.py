@@ -2,12 +2,10 @@ import pytest
 
 _ = pytest.importorskip("duckdb.experimental.spark")
 
-from duckdb.experimental.spark.sql.column import Column
 from duckdb.experimental.spark.sql.functions import struct
 from duckdb.experimental.spark.sql.types import Row
 from duckdb.experimental.spark.errors import PySparkTypeError
 
-import duckdb
 import re
 
 

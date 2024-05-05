@@ -1,7 +1,5 @@
 import duckdb
 from threading import Thread, current_thread
-import pandas as pd
-import os
 import pytest
 
 

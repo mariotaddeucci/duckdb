@@ -1,6 +1,4 @@
-import duckdb
 import pytest
-import string
 import datetime as dt
 
 pa = pytest.importorskip("pyarrow")
@@ -11,12 +9,12 @@ pa = pytest.importorskip("pyarrow")
 # so we have to convert ConstantValues back to their native unit when pushing the filter expression containing them down to pyarrow
 class Test8522(object):
     def test_8522(self, duckdb_cursor):
-        t_us = pa.Table.from_arrays(
+        pa.Table.from_arrays(
             arrays=[pa.array([dt.datetime(2022, 1, 1)])],
             schema=pa.schema([pa.field("time", pa.timestamp("us", tz="UTC"))]),
         )
 
-        t_ms = pa.Table.from_arrays(
+        pa.Table.from_arrays(
             arrays=[pa.array([dt.datetime(2022, 1, 1)])],
             schema=pa.schema([pa.field("time", pa.timestamp("ms", tz="UTC"))]),
         )

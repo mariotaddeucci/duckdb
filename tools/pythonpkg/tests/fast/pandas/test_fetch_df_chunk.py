@@ -89,4 +89,4 @@ class TestType(object):
 
         # Return -1 vector should not work
         with pytest.raises(TypeError, match='incompatible function arguments'):
-            cur_chunk = query.fetch_df_chunk(-1)
+            query.fetch_df_chunk(-1)

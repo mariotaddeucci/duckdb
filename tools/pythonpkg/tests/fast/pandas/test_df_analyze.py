@@ -1,5 +1,4 @@
 import duckdb
-import datetime
 import numpy as np
 import pytest
 from conftest import NumpyPandas, ArrowPandas
@@ -55,7 +54,7 @@ class TestResolveObjectColumns(object):
         df = create_generic_dataframe(data, pandas)
         # Sample size is too low to detect the mismatch, exception is raised when trying to convert
         with pytest.raises(duckdb.InvalidInputException, match="Failed to cast value: Unimplemented type for cast"):
-            roundtripped_df = duckdb.query_df(df, "x", "select * from x", connection=duckdb_conn).df()
+            duckdb.query_df(df, "x", "select * from x", connection=duckdb_conn).df()
 
     @pytest.mark.parametrize('pandas', [NumpyPandas(), ArrowPandas()])
     def test_10750(self, duckdb_cursor, pandas):
