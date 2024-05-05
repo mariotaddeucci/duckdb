@@ -1,6 +1,4 @@
-import duckdb
 import datetime
-import numpy as np
 import pytest
 from conftest import NumpyPandas, ArrowPandas
 from packaging.version import Version
@@ -12,7 +10,7 @@ class TestDateTimeTimeStamp(object):
     @pytest.mark.parametrize('pandas', [NumpyPandas(), ArrowPandas()])
     def test_timestamp_high(self, pandas, duckdb_cursor):
         duckdb_time = duckdb_cursor.sql("SELECT '2260-01-01 23:59:00'::TIMESTAMP AS '0'").df()
-        df_in = pandas.DataFrame(
+        pandas.DataFrame(
             {
                 0: pandas.Series(
                     data=[datetime.datetime(year=2260, month=1, day=1, hour=23, minute=59)],
@@ -62,7 +60,7 @@ class TestDateTimeTimeStamp(object):
 
         offset = datetime.timedelta(hours=-2)
         timezone = datetime.timezone(offset)
-        df_in = pandas.DataFrame(
+        pandas.DataFrame(
             {
                 0: pandas.Series(
                     data=[datetime.datetime(year=2022, month=1, day=1, hour=15, tzinfo=timezone)], dtype='object'
@@ -88,7 +86,7 @@ class TestDateTimeTimeStamp(object):
         offset = datetime.timedelta(hours=-19)
         timezone = datetime.timezone(offset)
 
-        df_in = pandas.DataFrame(
+        pandas.DataFrame(
             {
                 0: pandas.Series(
                     data=[datetime.datetime(year=2021, month=12, day=31, hour=22, tzinfo=timezone)], dtype='object'
@@ -113,7 +111,7 @@ class TestDateTimeTimeStamp(object):
         offset = datetime.timedelta(hours=20)
         timezone = datetime.timezone(offset)
 
-        df_in = pandas.DataFrame(
+        pandas.DataFrame(
             {
                 0: pandas.Series(
                     data=[datetime.datetime(year=2022, month=1, day=1, hour=19, tzinfo=timezone)], dtype='object'
@@ -129,10 +127,10 @@ class TestDateTimeTimeStamp(object):
     @pytest.mark.parametrize('unit', ['ms', 'ns', 's'])
     def test_timestamp_timezone_coverage(self, unit, duckdb_cursor):
         pd = pytest.importorskip("pandas")
-        ts_df = pd.DataFrame(
+        pd.DataFrame(
             {'ts': pd.Series(data=[pd.Timestamp(datetime.datetime(1990, 12, 21))], dtype=f'datetime64[{unit}]')}
         )
-        usecond_df = pd.DataFrame(
+        pd.DataFrame(
             {'ts': pd.Series(data=[pd.Timestamp(datetime.datetime(1990, 12, 21))], dtype='datetime64[us]')}
         )
 

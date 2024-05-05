@@ -1,11 +1,10 @@
 import duckdb
-import pytest
 
 try:
-    import pyarrow as pa
+    import pyarrow
 
     can_run = True
-except:
+except Exception:
     can_run = False
 
 
@@ -85,7 +84,9 @@ class TestArrowFetch(object):
         duckdb_conn.execute("PREPARE s1 AS INSERT INTO test VALUES ($1), ($2 / 2)")
 
         for value in range(10000):
-            duckdb_conn.execute("EXECUTE s1(" + str(value) + "," + str(value * 2) + ");")
+            duckdb_conn.execute(
+                "EXECUTE s1(" + str(value) + "," + str(value * 2) + ");"
+            )
 
         check_equal(duckdb_conn)
 
@@ -95,8 +96,8 @@ class TestArrowFetch(object):
 
         duckdb_cursor = duckdb.connect()
         duckdb_cursor.execute("CREATE table t as select range a from range(3000);")
-        relation = duckdb_cursor.table('t')
+        relation = duckdb_cursor.table("t")
         arrow_tbl = relation.arrow()
-        assert arrow_tbl['a'].num_chunks == 1
+        assert arrow_tbl["a"].num_chunks == 1
         arrow_tbl = relation.arrow(2048)
-        assert arrow_tbl['a'].num_chunks == 2
+        assert arrow_tbl["a"].num_chunks == 2

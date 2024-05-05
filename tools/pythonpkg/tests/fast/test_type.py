@@ -1,6 +1,4 @@
 import duckdb
-import os
-import pandas as pd
 import pytest
 from typing import Union, Optional
 import sys
@@ -112,7 +110,6 @@ class TestType(object):
         type = duckdb.union_type({'a': BIGINT, 'b': VARCHAR, 'c': TINYINT})
         assert str(type) == 'UNION(a BIGINT, b VARCHAR, c TINYINT)'
 
-    import sys
 
     @pytest.mark.skipif(sys.version_info < (3, 9), reason="requires >= python3.9")
     def test_implicit_convert_from_builtin_type(self):
@@ -183,8 +180,8 @@ class TestType(object):
 
     def test_attribute_accessor(self):
         type = duckdb.row_type([BIGINT, duckdb.list_type(duckdb.map_type(BLOB, BIT))])
-        assert hasattr(type, 'a') == False
-        assert hasattr(type, 'v1') == True
+        assert hasattr(type, 'a') is False
+        assert hasattr(type, 'v1') is True
 
         field_one = type['v1']
         assert str(field_one) == 'BIGINT'

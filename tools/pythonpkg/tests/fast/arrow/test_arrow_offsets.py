@@ -1,4 +1,3 @@
-import duckdb
 import pytest
 from pytest import mark
 import datetime
@@ -75,9 +74,8 @@ def expected_result(col1_null, col2_null, expected):
     return [(col1, col2)]
 
 
-test_nulls = lambda: mark.parametrize(
-    ['col1_null', 'col2_null'], [(False, True), (True, False), (True, True), (False, False)]
-)
+def test_nulls():
+    return mark.parametrize(["col1_null", "col2_null"], [(False, True), (True, False), (True, True), (False, False)])
 
 
 class TestArrowOffsets(object):
@@ -90,7 +88,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", pa.string()), ("col2", pa.struct({"a": pa.string()}))]),
         )
@@ -116,7 +114,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", pa.bool_()), ("col2", pa.struct({"a": pa.bool_()}))]),
         )
@@ -148,7 +146,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", constructor()), ("col2", pa.struct({"a": constructor()}))]),
         )
@@ -176,7 +174,7 @@ class TestArrowOffsets(object):
         if col2_null:
             struct_tuples[-1] = None
 
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {'col1': pa.array(tuples, enum_type), 'col2': pa.array(struct_tuples, pa.struct({"a": enum_type}))},
             schema=pa.schema([("col1", enum_type), ("col2", pa.struct({"a": enum_type}))]),
         )
@@ -199,7 +197,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", pa.binary()), ("col2", pa.struct({"a": pa.binary()}))]),
         )
@@ -237,7 +235,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", constructor(unit)), ("col2", pa.struct({"a": constructor(unit)}))]),
         )
@@ -272,7 +270,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", constructor()), ("col2", pa.struct({"a": constructor()}))]),
         )
@@ -307,7 +305,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", constructor(unit)), ("col2", pa.struct({"a": constructor(unit)}))]),
         )
@@ -343,7 +341,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema(
                 [("col1", constructor(unit, 'UTC')), ("col2", pa.struct({"a": constructor(unit, 'UTC')}))]
@@ -369,7 +367,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": i} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", pa.large_binary()), ("col2", pa.struct({"a": pa.large_binary()}))]),
         )
@@ -408,7 +406,7 @@ class TestArrowOffsets(object):
         if col2_null:
             col2[-1] = None
 
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema(
                 [("col1", pa.decimal128(precision, scale)), ("col2", pa.struct({"a": pa.decimal128(precision, scale)}))]
@@ -434,7 +432,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": [i, i, i]} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", pa.string()), ("col2", pa.struct({"a": pa.list_(pa.string())}))]),
         )
@@ -464,7 +462,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": [i, i, i]} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", pa.string()), ("col2", pa.struct({"a": pa.list_(pa.string(), 3)}))]),
         )
@@ -494,7 +492,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": [i, increment_or_null(i, 1), increment_or_null(i, 2)]} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", pa.binary()), ("col2", pa.struct({"a": pa.list_(pa.binary(), 3)}))]),
         )
@@ -525,7 +523,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": [i, increment_or_null(i, 1), increment_or_null(i, 2)]} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             schema=pa.schema([("col1", pa.binary()), ("col2", pa.struct({"a": pa.list_(pa.binary())}))]),
         )
@@ -556,7 +554,7 @@ class TestArrowOffsets(object):
         col2 = [{"a": [[i, i, i], [], None, [i]]} for i in col1]
         if col2_null:
             col2[-1] = None
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": col1, "col2": col2},
             # thanks formatter
             schema=pa.schema([("col1", pa.int32()), ("col2", pa.struct({"a": pa.list_(pa.list_(pa.int32()))}))]),
@@ -585,12 +583,12 @@ class TestArrowOffsets(object):
         if col1_null:
             tuples[-1] = None
         tuples = [tuples]
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": tuples},
             schema=pa.schema([("col1", pa.list_(pa.struct({"a": pa.int32()})))]),
         )
         res = duckdb_cursor.sql(
-            f"""
+            """
             SELECT
                 col1
             FROM arrow_table
@@ -601,7 +599,7 @@ class TestArrowOffsets(object):
             assert x.__class__ == dict
             assert x['a'] == i
         if col1_null:
-            assert res[-1] == None
+            assert res[-1] is None
         else:
             assert res[-1]['a'] == len(res) - 1
 
@@ -618,7 +616,7 @@ class TestArrowOffsets(object):
 
         # MAGIC_ARRAY_SIZE tuples, all containing a single child list
         # except the last tuple, the child list of which is also MAGIC_ARRAY_SIZE in length
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": tuples},
             schema=pa.schema(
                 [
@@ -642,7 +640,7 @@ class TestArrowOffsets(object):
             assert res == [(None,)]
         else:
             if inner_null:
-                assert res[-1][-1][-1] == None
+                assert res[-1][-1][-1] is None
             else:
                 assert res[-1][-1][-1] == 131072
 
@@ -657,7 +655,7 @@ class TestArrowOffsets(object):
 
         # Except the very last element, which is big
 
-        arrow_table = pa.Table.from_pydict(
+        pa.Table.from_pydict(
             {"col1": tuples}, schema=pa.schema([("col1", pa.struct({"a": pa.list_(pa.string())}))])
         )
         res = duckdb_cursor.sql(
@@ -668,6 +666,6 @@ class TestArrowOffsets(object):
         """
         ).fetchone()
         if col1_null:
-            assert res[0] == None
+            assert res[0] is None
         else:
             assert res[0]['a'][-1] == '131072'

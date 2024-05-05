@@ -1,7 +1,6 @@
 import pandas as pd
 import duckdb
 import datetime
-import numpy as np
 import pytest
 
 
@@ -76,8 +75,8 @@ class TestTimedelta(object):
         equality = "select {value} = $1, {value}, $1"
         equality = equality.format(value=duck_interval)
         res, a, b = duckdb_cursor.execute(equality, [val]).fetchone()
-        if res != True:
+        if res is not True:
             # FIXME: in some cases intervals that are identical don't compare equal.
             assert a == b
         else:
-            assert res == True
+            assert res is True

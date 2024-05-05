@@ -374,7 +374,7 @@ class TestRelation(object):
         query = f"call repeat_row(42, 'test', 'this is a long string', true, num_rows={num_rows})"
         rel = duckdb_cursor.sql(query)
         res = rel.fetchone()
-        assert res != None
+        assert res is not None
 
         res = rel.fetchmany(num_rows)
         assert len(res) == num_rows - 1
@@ -384,11 +384,11 @@ class TestRelation(object):
         res = rel.fetchmany(5)
         assert len(res) == 0
         res = rel.fetchone()
-        assert res == None
+        assert res is None
 
         rel.execute()
         res = rel.fetchone()
-        assert res != None
+        assert res is not None
 
         res = rel.fetchall()
         assert len(res) == num_rows - 1

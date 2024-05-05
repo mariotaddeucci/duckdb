@@ -104,7 +104,7 @@ def pandas_supports_arrow_backend():
     try:
         from pandas.compat import pa_version_under11p0
 
-        if pa_version_under11p0 == True:
+        if pa_version_under11p0 is True:
             return False
     except ImportError:
         return False

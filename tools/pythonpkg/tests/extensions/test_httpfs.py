@@ -29,7 +29,7 @@ class TestHTTPFS(object):
     def test_s3fs(self, require):
         connection = require('httpfs')
 
-        rel = connection.read_csv(f"s3://duckdb-blobs/data/Star_Trek-Season_1.csv", header=True)
+        rel = connection.read_csv("s3://duckdb-blobs/data/Star_Trek-Season_1.csv", header=True)
         res = rel.fetchone()
         assert res == (1, 0, datetime.date(1965, 2, 28), 0, 0, 0, 1, 0, 1, 1, 1, 0, 0, 6, 0, 0, 0, 0)
 

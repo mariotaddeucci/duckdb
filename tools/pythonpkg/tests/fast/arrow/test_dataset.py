@@ -47,7 +47,7 @@ class TestArrowDataset(object):
             format="parquet",
         )
 
-        rel = duckdb_conn.register("dataset", userdata_parquet_dataset)
+        duckdb_conn.register("dataset", userdata_parquet_dataset)
 
         assert (
             duckdb_conn.execute(
@@ -72,16 +72,16 @@ class TestArrowDataset(object):
             format="parquet",
         )
 
-        rel = duckdb_conn.register("dataset", userdata_parquet_dataset)
+        duckdb_conn.register("dataset", userdata_parquet_dataset)
 
         query = duckdb_conn.execute("SELECT * FROM dataset order by id")
         record_batch_reader = query.fetch_record_batch(2048)
 
-        arrow_table = record_batch_reader.read_all()
+        record_batch_reader.read_all()
         # reorder since order of rows isn't deterministic
         df = userdata_parquet_dataset.to_table().to_pandas().sort_values('id').reset_index(drop=True)
         # turn it into an arrow table
-        arrow_table_2 = pyarrow.Table.from_pandas(df)
+        pyarrow.Table.from_pandas(df)
         result_1 = duckdb_conn.execute("select * from arrow_table order by all").fetchall()
 
         result_2 = duckdb_conn.execute("select * from arrow_table_2 order by all").fetchall()
@@ -90,7 +90,7 @@ class TestArrowDataset(object):
 
     def test_ducktyping(self, duckdb_cursor):
         duckdb_conn = duckdb.connect()
-        dataset = CustomDataset()
+        CustomDataset()
         query = duckdb_conn.execute("SELECT b FROM dataset WHERE a < 5")
         record_batch_reader = query.fetch_record_batch(2048)
         arrow_table = record_batch_reader.read_all()

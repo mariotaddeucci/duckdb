@@ -1,15 +1,17 @@
 # cursor description
 
-import duckdb
-import tempfile
 import os
+import tempfile
+
+import duckdb
+import duckdb
 
 
 def check_exception(f):
     had_exception = False
     try:
         f()
-    except:
+    except Exception:
         had_exception = True
     assert had_exception
 

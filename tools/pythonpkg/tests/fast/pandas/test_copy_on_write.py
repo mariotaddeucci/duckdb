@@ -33,9 +33,9 @@ class TestCopyOnWrite(object):
         ],
     )
     def test_copy_on_write(self, col):
-        assert pandas.options.mode.copy_on_write == True
+        assert pandas.options.mode.copy_on_write is True
         con = duckdb.connect()
-        df_in = pandas.DataFrame(
+        pandas.DataFrame(
             {
                 'numbers': col,
             }

@@ -1,11 +1,10 @@
 import duckdb
-import os
 
 try:
-    import pyarrow as pa
+    import pyarrow
 
     can_run = True
-except:
+except Exception:
     can_run = False
 
 
@@ -22,15 +21,15 @@ class Test2426(object):
                 con.execute("Insert Into test values ('" + str(i) + "')")
         con.execute("Insert Into test values ('5000')")
         con.execute("Insert Into test values ('6000')")
-        sql = '''
+        sql = """
         SELECT  a, COUNT(*) AS repetitions
         FROM    test
         GROUP BY a
-        '''
+        """
 
         result_df = con.execute(sql).df()
 
         arrow_table = con.execute(sql).fetch_arrow_table()
 
         arrow_df = arrow_table.to_pandas()
-        assert result_df['repetitions'].sum() == arrow_df['repetitions'].sum()
+        assert result_df["repetitions"].sum() == arrow_df["repetitions"].sum()
