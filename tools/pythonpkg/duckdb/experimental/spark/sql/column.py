@@ -359,3 +359,9 @@ class Column:
 
     def desc_nulls_last(self) -> "Column":
         return self.desc().nulls_last()
+
+    def isNull(self) -> "Column":
+        return Column(self.expr.isnull())
+
+    def isNotNull(self) -> "Column":
+        return ~self.isNull()

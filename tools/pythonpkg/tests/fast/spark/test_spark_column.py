@@ -49,3 +49,17 @@ class TestSparkColumn(object):
         assert res[0].array == [1, 2]
         assert res[0].array_single == [1]
         assert res[0].array_str == [2, 3, 4]
+
+    def test_is_null(self, spark):
+        df = spark.createDataFrame([Row(a=1, b=None, c=3, d=4)], ['a', 'b', 'c', 'd'])
+        df2 = df.select(df.a.isNull().alias("a_null"), df.b.isNull().alias("b_null"))
+        res = df2.collect()
+        assert res[0].a_null == False
+        assert res[0].b_null == True
+
+    def test_is_not_null(self, spark):
+        df = spark.createDataFrame([Row(a=1, b=None, c=3, d=4)], ['a', 'b', 'c', 'd'])
+        df2 = df.select(df.a.isNotNull().alias("a_not_null"), df.b.isNotNull().alias("b_not_null"))
+        res = df2.collect()
+        assert res[0].a_not_null == True
+        assert res[0].b_not_null == False
